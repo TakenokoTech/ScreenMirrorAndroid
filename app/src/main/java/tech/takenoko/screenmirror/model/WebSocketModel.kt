@@ -1,18 +1,12 @@
 package tech.takenoko.screenmirror.model
 
-import android.app.Activity
-import android.media.MediaCodec
-import android.widget.TextView
 import org.java_websocket.client.WebSocketClient
 import org.java_websocket.handshake.ServerHandshake
 import tech.takenoko.screenmirror.utils.MLog
 import java.net.URI
-import java.net.URL
+import java.nio.ByteBuffer
 
 class WebSocketModel (private val callback: WebSocketCallback) : WebSocketClient(uri) {
-
-    var sending: Boolean = false
-        private set
 
     override fun onOpen(handshakedata: ServerHandshake?) {
         MLog.info(TAG, "onOpen ${handshakedata?.httpStatus}")
@@ -33,9 +27,12 @@ class WebSocketModel (private val callback: WebSocketCallback) : WebSocketClient
 
     override fun send(data: ByteArray?) {
         MLog.info(TAG, "send")
-        sending = true
-        super.send(data)
-        sending = false
+        if (isOpen) super.send(data)
+    }
+
+    override fun send(data: ByteBuffer?) {
+        MLog.info(TAG, "send")
+        if (isOpen) super.send(data)
     }
 
     companion object {

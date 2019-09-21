@@ -47,7 +47,7 @@ function webSocket() {
   const socket = new WebSocket('ws://localhost:8080');
   socket.addEventListener('open', e => {
     console.log('open');
-    setInterval(() => socket.send('polling'), 100);
+    setInterval(() => socket.send('polling'), 60);
   });
   socket.addEventListener('message', e => {
     const data = e.data

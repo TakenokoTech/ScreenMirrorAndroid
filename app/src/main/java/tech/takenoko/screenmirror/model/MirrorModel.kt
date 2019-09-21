@@ -11,14 +11,14 @@ import android.media.MediaFormat
 import android.media.projection.MediaProjection
 import android.util.DisplayMetrics
 import android.view.Surface
+import androidx.lifecycle.MutableLiveData
 import tech.takenoko.screenmirror.utils.MLog
+import java.nio.ByteBuffer
 
 
 class MirrorModel(private val metrics: DisplayMetrics, private val callback: MirrorCallback) :
     ImageReader.OnImageAvailableListener {
     enum class StatesType { Stop, Waiting, Running }
-
-    var states: StatesType = StatesType.Stop; private set
 
     private var mediaProjection: MediaProjection? = null
     private var virtualDisplay: VirtualDisplay? = null
@@ -64,15 +64,11 @@ class MirrorModel(private val metrics: DisplayMetrics, private val callback: Mir
 
     override fun onImageAvailable(reader: ImageReader) {
         MLog.debug(TAG, "onImageAvailable")
-        val image = reader.acquireLatestImage().use { img ->
+        reader.acquireLatestImage().use { img ->
             val plane = img?.planes?.get(0) ?: return@use null
-            return@use Bitmap.createBitmap(
-                plane.rowStride / plane.pixelStride,
-                metrics.heightPixels,
-                Bitmap.Config.ARGB_8888
-            ).apply { copyPixelsFromBuffer(plane.buffer) }
+            val bitmap = Bitmap.createBitmap(plane.rowStride / plane.pixelStride, metrics.heightPixels, Bitmap.Config.ARGB_8888).apply { copyPixelsFromBuffer(plane.buffer) }
+            callback.changeBitmap(bitmap)
         }
-        if (image != null) callback.changeBitmap(image)
     }
 
     //エンコーダの準備
@@ -103,14 +99,10 @@ class MirrorModel(private val metrics: DisplayMetrics, private val callback: Mir
 
     @Deprecated("not used")
     private val mediaCodecCallback = object : MediaCodec.Callback() {
-        override fun onOutputBufferAvailable(
-            codec: MediaCodec,
-            index: Int,
-            info: MediaCodec.BufferInfo
-        ) {
+        override fun onOutputBufferAvailable(codec: MediaCodec, index: Int, info: MediaCodec.BufferInfo) {
             MLog.debug(MEDIA_TAG, "onOutputBufferAvailable : $info")
             codec.getOutputBuffer(index)?.also {
-                callback.send(ByteArray(it.limit()).apply { it.get(this@apply) })
+                callback.handleByteArray(ByteArray(it.limit()).apply { it.get(this@apply) })
             }
             codec.releaseOutputBuffer(index, false)
         }
@@ -132,18 +124,19 @@ class MirrorModel(private val metrics: DisplayMetrics, private val callback: Mir
     }
 
     private fun setState(states: StatesType) {
-        this.states = states
+        MirrorModel.states = states
         callback.changeState()
     }
 
     companion object {
         val TAG: String = MirrorModel::class.java.simpleName
         val MEDIA_TAG: String = MediaCodec::class.java.simpleName
+        var states: StatesType = StatesType.Stop; private set
     }
 
     interface MirrorCallback {
         fun changeState()
-        fun changeBitmap(image: Bitmap)
-        fun send(array: ByteArray)
+        fun changeBitmap(image: Bitmap?)
+        fun handleByteArray(array: ByteArray)
     }
 }
