@@ -1,6 +1,8 @@
 package tech.takenoko.screenmirror.model
 
+import android.annotation.SuppressLint
 import android.graphics.Bitmap
+import android.graphics.PixelFormat
 import android.hardware.display.DisplayManager
 import android.hardware.display.VirtualDisplay
 import android.media.ImageReader
@@ -37,13 +39,14 @@ class MirrorModel(private val metrics: DisplayMetrics, private val callback: Mir
         setState(StatesType.Stop)
     }
 
+    @SuppressLint
     fun setupVirtualDisplay(): ImageReader? {
         MLog.info(TAG, "setupVirtualDisplay")
         val scale = 1
         val width = metrics.widthPixels * scale
         val height = metrics.heightPixels * scale
         val dpi = metrics.densityDpi
-        val reader = ImageReader.newInstance(width, height, 0x1, 2)
+        val reader = ImageReader.newInstance(width, height, PixelFormat.RGBA_8888, 2)
             .also { it.setOnImageAvailableListener(this, null) }
         virtualDisplay = mediaProjection?.createVirtualDisplay(
             "Capturing Display",
