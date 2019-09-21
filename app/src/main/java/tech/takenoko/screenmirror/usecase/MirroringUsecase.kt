@@ -51,13 +51,11 @@ class MirroringUsecase(private val context: Context): MirrorModel.MirrorCallback
     override fun changeBitmap(image: Bitmap?) {
         MLog.info(TAG, "changeBitmap")
         sending = if(!sending) true else return
-        GlobalScope.launch {
-            ByteArrayOutputStream().use { stream ->
-                image?.compress(Bitmap.CompressFormat.JPEG, 100, stream).also {
-                    webSocketModel.send(stream.toByteArray())
-                }
+        ByteArrayOutputStream().use { stream ->
+            image?.compress(Bitmap.CompressFormat.JPEG, 50, stream).also {
+                sending = false
+                webSocketModel.send(stream.toByteArray())
             }
-            sending = false
         }
         imageLivaData.value = image
     }

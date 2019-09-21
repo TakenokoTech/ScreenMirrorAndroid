@@ -37,7 +37,8 @@ class WebSocketModel (private val callback: WebSocketCallback) : WebSocketClient
 
     companion object {
         val TAG: String = WebSocketModel::class.java.simpleName
-        val uri = URI("ws://10.0.2.2:8080")
+        // val uri = URI("ws://10.0.2.2:8080")
+        val uri = URI("ws://192.168.0.106:8080")
     }
 
     interface WebSocketCallback {

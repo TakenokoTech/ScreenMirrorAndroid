@@ -5,7 +5,7 @@
     "main": "index.js",
     "scripts": {
         "start": "node --experimental-modules server.mjs",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "ngrok": "ngrok http 8080"
     },
     "author": "",
     "license": "ISC",

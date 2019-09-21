@@ -47,6 +47,13 @@ class MirroringService : Service() {
         mirroringUsecase.start()
     }
 
+    override fun onDestroy() {
+        MLog.info(TAG, "onDestroy")
+
+        mirroringUsecase.stop()
+        super.onDestroy()
+    }
+
     companion object {
         val TAG: String = MirroringService::class.java.simpleName
         const val ID = 1

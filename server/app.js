@@ -1,3 +1,11 @@
+/*==================================================================================*/
+// const video = document.getElementById('v');
+// video.src = URL.createObjectURL(mediaSource);
+const image = document.getElementById('image');
+const submitButton = document.getElementById('submit')
+const websocketInput = document.getElementById('websocketInput')
+
+/*==================================================================================*/
 const mediaSource = new MediaSource();
 mediaSource.addEventListener('sourceended', function(e) {
   console.log('sourceended: ' + mediaSource.readyState);
@@ -43,8 +51,9 @@ function sourceopen(e) {
   });
 }
 
-function webSocket() {
-  const socket = new WebSocket('ws://localhost:8080');
+let socket = null
+function webSocket(ws) {
+  socket = new WebSocket(ws);
   socket.addEventListener('open', e => {
     console.log('open');
     setInterval(() => socket.send('polling'), 60);
@@ -66,8 +75,21 @@ function webSocket() {
     });
 }
 
-// const video = document.getElementById('v');
-// video.src = URL.createObjectURL(mediaSource);
+websocketInput.value = localStorage.getItem('websocketInput') || 'localhost'
+submitButton.onclick = () => {
+  submitButton.disabled = true
+  if (socket) socket.close();
+  webSocket(`ws://${websocketInput.value}:8080`)
+  localStorage.setItem('websocketInput', websocketInput.value);
 
-const image = document.getElementById('image');
-webSocket()
+  $('#qrcode').qrcode({
+    text: `ws://${websocketInput.value}:8080`,
+    width: 100,
+    height: 100,
+    background: '#fff',
+    foreground: '#000'
+  });
+  $('.button-group').css('display', 'none');
+  $('.qr-group').css('display', 'block');
+  $('#image').css('display', 'block');
+};
