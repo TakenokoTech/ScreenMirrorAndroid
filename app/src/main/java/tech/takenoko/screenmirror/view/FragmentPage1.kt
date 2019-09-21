@@ -2,10 +2,8 @@ package tech.takenoko.screenmirror.view
 
 import android.Manifest.permission.*
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.projection.MediaProjectionManager
-import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -88,7 +86,7 @@ class FragmentPage1 : BaseFragment<FragmentPage1ViewModel>() {
     }
 
     companion object {
-        val TAG = FragmentPage1::class.java.simpleName
+        val TAG: String = FragmentPage1::class.java.simpleName
         const val REQUEST_CODE = 1
         val USED_PERMISSION = listOf(READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE, RECORD_AUDIO)
     }

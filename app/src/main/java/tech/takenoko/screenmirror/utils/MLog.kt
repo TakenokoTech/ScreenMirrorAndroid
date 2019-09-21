@@ -3,7 +3,7 @@ package tech.takenoko.screenmirror.utils
 import android.util.Log
 
 object MLog {
-    val LOG_FORMAT: String = "<Log>%s"
+    private const val LOG_FORMAT: String = "<Log>%s"
     fun Boolean.toInt() = if (this) 1 else 0
 
     private fun isCurrent(): String {

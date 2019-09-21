@@ -26,7 +26,7 @@ class MediaProjectionModel : Activity() {
     }
 
     companion object {
-        val TAG = MediaProjectionModel::class.java.simpleName
+        val TAG: String = MediaProjectionModel::class.java.simpleName
         private const val REQUEST_CAPTURE = 1
 
         var projection: (MediaProjection?) -> Unit = {}

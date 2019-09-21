@@ -71,7 +71,7 @@ class MirroringUsecase(private val context: Context): MirrorModel.MirrorCallback
     }
 
     companion object {
-        val TAG = MirroringUsecase::class.java.simpleName
+        val TAG: String = MirroringUsecase::class.java.simpleName
         val CODEC = listOf(
             MediaFormat.MIMETYPE_VIDEO_AVC,
             MediaFormat.MIMETYPE_VIDEO_HEVC,

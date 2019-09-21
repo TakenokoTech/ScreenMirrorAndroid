@@ -48,7 +48,7 @@ class MirroringService : Service() {
     }
 
     companion object {
-        val TAG = MirroringService::class.java.simpleName
+        val TAG: String = MirroringService::class.java.simpleName
         const val ID = 1
         const val CHANNEL_ID = "mirrorForeground"
         const val CHANNEL_NAME = "ミラーリング"

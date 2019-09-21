@@ -39,7 +39,7 @@ class MirrorModel(private val metrics: DisplayMetrics, private val callback: Mir
         setState(StatesType.Stop)
     }
 
-    @SuppressLint
+    @SuppressLint("WrongConstant")
     fun setupVirtualDisplay(): ImageReader? {
         MLog.info(TAG, "setupVirtualDisplay")
         val scale = 1
@@ -97,7 +97,6 @@ class MirrorModel(private val metrics: DisplayMetrics, private val callback: Mir
         codec.start()
     }
 
-    @Deprecated("not used")
     private val mediaCodecCallback = object : MediaCodec.Callback() {
         override fun onOutputBufferAvailable(codec: MediaCodec, index: Int, info: MediaCodec.BufferInfo) {
             MLog.debug(MEDIA_TAG, "onOutputBufferAvailable : $info")
