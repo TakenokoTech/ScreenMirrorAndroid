@@ -1,7 +1,6 @@
 package tech.takenoko.screenmirror.model
 
 import android.graphics.Bitmap
-import android.graphics.PixelFormat
 import android.hardware.display.DisplayManager
 import android.hardware.display.VirtualDisplay
 import android.media.ImageReader
@@ -11,9 +10,7 @@ import android.media.MediaFormat
 import android.media.projection.MediaProjection
 import android.util.DisplayMetrics
 import android.view.Surface
-import androidx.lifecycle.MutableLiveData
 import tech.takenoko.screenmirror.utils.MLog
-import java.nio.ByteBuffer
 
 
 class MirrorModel(private val metrics: DisplayMetrics, private val callback: MirrorCallback) :
@@ -46,7 +43,7 @@ class MirrorModel(private val metrics: DisplayMetrics, private val callback: Mir
         val width = metrics.widthPixels * scale
         val height = metrics.heightPixels * scale
         val dpi = metrics.densityDpi
-        val reader = ImageReader.newInstance(width, height, PixelFormat.RGBA_8888, 2)
+        val reader = ImageReader.newInstance(width, height, 0x1, 2)
             .also { it.setOnImageAvailableListener(this, null) }
         virtualDisplay = mediaProjection?.createVirtualDisplay(
             "Capturing Display",
