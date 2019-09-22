@@ -14,9 +14,30 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-    buildTypes {
+    signingConfigs {
+        debug {
+            storeFile       rootProject.file("debug.keystore")
+            storePassword   "testpass"
+            keyAlias        "debugkey"
+            keyPassword     "testpass"
+        }
         release {
-            minifyEnabled false
+            storeFile       rootProject.file("release.jks")
+            storePassword   System.getenv("RELEASE_STORE_PASSWORD")
+            keyAlias        System.getenv("RELEASE_KEY_ALIAS")
+            keyPassword     System.getenv("RELEASE_KEY_PASSWORD")
+        }
+    }
+    buildTypes {
+        debug {
+            signingConfig       signingConfigs.debug
+            debuggable          true
+            testCoverageEnabled true
+        }
+        release {
+            signingConfig       signingConfigs.release
+            debuggable          false
+            minifyEnabled       true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
