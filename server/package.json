@@ -7,13 +7,14 @@
         "start": "webpack --mode=development",
         "watch": "webpack -w --mode=development",
         "app": "electron .",
-        "deploy": "set NODE_ENV=production && webpack",
+        "deploy": "set NODE_ENV=production && webpack --mode=production",
         "package-all": "npm run deploy && electron-packager . ScreenMirrorApp --out=build --platform=all --arch=x64 --electron-version=6.0.10 --prune --overwrite --asar --ignore=build --ignore=src",
         "package-win": "npm run deploy && electron-packager . ScreenMirrorApp --out=build --platform=win32 --arch=x64 --electron-version=6.0.10 --prune --overwrite --asar --ignore=build --ignore=src",
         "package-mac": "npm run deploy && electron-packager . ScreenMirrorApp --out=build --platform=darwin --arch=x64 --electron-version=6.0.10 --prune --overwrite --asar --ignore=build --ignore=src",
         "package-linux": "npm run deploy && electron-packager . ScreenMirrorApp --out=build --platform=linux --arch=x64 --electron-version=6.0.10 --prune --overwrite --asar --ignore=build --ignore=src",
         "server": "node --experimental-modules server.mjs",
-        "ngrok": "ngrok http 8080"
+        "ngrok": "ngrok http 8080",
+        "test": ""
     },
     "author": "",
     "license": "ISC",
