@@ -10,14 +10,23 @@ jobs:
         node-version: [8.x, 10.x, 12.x]
     steps:
     - uses: actions/checkout@v1
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Setup Node.js
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - name: npm install, build, and test
+    - name: Install
       run: |
         cd server
         npm install
-        npm run package-all
-      env:
-        CI: true
+    - name: Build (webpack)
+      run: |
+        npm build-webpack
+    - name: Build (windows)
+      run: |
+        npm run build-win
+    - name: Build (mac)
+      run: |
+        npm run build-mac
+    - name: Build (linux)
+      run: |
+        npm run build-linux
