@@ -15,12 +15,6 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     signingConfigs {
-        debug {
-            storeFile       rootProject.file("debug.keystore")
-            storePassword   "testpass"
-            keyAlias        "debugkey"
-            keyPassword     "testpass"
-        }
         release {
             storeFile       rootProject.file("release.jks")
             storePassword   System.getenv("RELEASE_STORE_PASSWORD")
@@ -30,7 +24,6 @@ android {
     }
     buildTypes {
         debug {
-            signingConfig       signingConfigs.debug
             debuggable          true
             testCoverageEnabled true
         }
