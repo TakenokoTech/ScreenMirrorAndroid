@@ -15,7 +15,7 @@ jobs:
         run: |
           chmod +x ./gradlew && ./gradlew assembleDebug
 
-  deploy:
+  deploy_apk:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -30,7 +30,7 @@ jobs:
           RELEASE_STORE_PASSWORD: ${{ secrets.RELEASE_STORE_PASSWORD }}
           RELEASE_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
           RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
-      - name: Deploy
+      - name: Upload DeployGate
         env:
           JOB_CONTAINER_ID: ${{ job.container.id }}
           DEPLOYGATE_USER: ${{ secrets.DEPLOYGATE_USER }}
