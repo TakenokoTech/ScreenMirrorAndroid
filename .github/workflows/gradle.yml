@@ -3,7 +3,7 @@ name: Android CI
 on: [push, pull_request]
 
 jobs:
-  build:
+  Build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
@@ -15,7 +15,7 @@ jobs:
         run: |
           chmod +x ./gradlew && ./gradlew assembleDebug
 
-  deploy_apk:
+  Deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
