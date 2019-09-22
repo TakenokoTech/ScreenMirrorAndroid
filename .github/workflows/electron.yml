@@ -38,3 +38,33 @@ jobs:
       run: |
         cd server
         npm run build-linux
+    - name: Deploy (windows)
+      if: matrix.os == 'windows-latest' && matrix.node == '12.x'
+      env:
+        TARGET_PATH: 'ScreenMirrorApp-win32-x64'
+        MAIL_ADDRESS: ${{ secrets.MAIL_ADDRESS }}
+        SERVICE_TOKEN: ${{ secrets.SERVICE_TOKEN }}
+      run: |
+        cd server
+        npm run deploy
+        npm run upload
+    - name: Deploy (mac)
+      if: matrix.os == 'macOS-latest' && matrix.node == '12.x'
+      env:
+        TARGET_PATH: 'ScreenMirrorApp-darwin-x64'
+        MAIL_ADDRESS: ${{ secrets.MAIL_ADDRESS }}
+        SERVICE_TOKEN: ${{ secrets.SERVICE_TOKEN }}
+      run: |
+        cd server
+        npm run deploy
+        npm run upload
+    - name: Deploy (linux)
+      if: matrix.os == 'ubuntu-latest' && matrix.node == '12.x'
+      env:
+        TARGET_PATH: 'ScreenMirrorApp-linux-x64'
+        MAIL_ADDRESS: ${{ secrets.MAIL_ADDRESS }}
+        SERVICE_TOKEN: ${{ secrets.SERVICE_TOKEN }}
+      run: |
+        cd server
+        npm run deploy
+        npm run upload
