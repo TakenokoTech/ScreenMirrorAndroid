@@ -26,19 +26,18 @@ class WebSocketModel (private val callback: WebSocketCallback) : WebSocketClient
     }
 
     override fun send(data: ByteArray?) {
-        MLog.info(TAG, "send")
+        MLog.debug(TAG, "send")
         if (isOpen) super.send(data)
     }
 
     override fun send(data: ByteBuffer?) {
-        MLog.info(TAG, "send")
+        MLog.debug(TAG, "send")
         if (isOpen) super.send(data)
     }
 
     companion object {
         val TAG: String = WebSocketModel::class.java.simpleName
-        // val uri = URI("ws://10.0.2.2:8080")
-        val uri = URI("ws://192.168.0.106:8080")
+        var uri = URI("ws://10.0.2.2:8080")
     }
 
     interface WebSocketCallback {

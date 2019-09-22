@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 abstract class BaseFragment<U: ViewModel> : Fragment() {
 
     protected lateinit var vm: U
+    protected abstract fun initLiveData()
     protected abstract fun onAttachLiveData()
     protected abstract fun onAttachEvent()
 

@@ -29,8 +29,9 @@ class MediaProjectionModel : Activity() {
         val TAG: String = MediaProjectionModel::class.java.simpleName
         private const val REQUEST_CAPTURE = 1
 
-        var projection: (MediaProjection?) -> Unit = {}
-        val run: (context: Context) -> Unit = { context ->
+        private var projection: (MediaProjection?) -> Unit = {}
+        val run: (context: Context, (MediaProjection?) -> Unit) -> Unit = { context, callback ->
+            projection = callback
             context.startActivity(Intent(context, MediaProjectionModel::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
         }
     }

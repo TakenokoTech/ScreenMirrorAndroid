@@ -46,8 +46,7 @@ class MirrorModel(private val metrics: DisplayMetrics, private val callback: Mir
         val width = metrics.widthPixels * scale
         val height = metrics.heightPixels * scale
         val dpi = metrics.densityDpi
-        val reader = ImageReader.newInstance(width, height, PixelFormat.RGBA_8888, 2)
-            .also { it.setOnImageAvailableListener(this, null) }
+        val reader = ImageReader.newInstance(width, height, PixelFormat.RGBA_8888, 2).also { it.setOnImageAvailableListener(this, null) }
         virtualDisplay = mediaProjection?.createVirtualDisplay(
             "Capturing Display",
             width,

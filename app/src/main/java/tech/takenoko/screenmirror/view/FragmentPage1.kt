@@ -17,20 +17,17 @@ import tech.takenoko.screenmirror.R
 import tech.takenoko.screenmirror.model.MirrorModel
 import tech.takenoko.screenmirror.service.MirroringService
 import tech.takenoko.screenmirror.usecase.MirroringUsecase
+import tech.takenoko.screenmirror.usecase.PairingUsecase
 import tech.takenoko.screenmirror.utils.MLog
 import tech.takenoko.screenmirror.utils.getNowDate
 import tech.takenoko.screenmirror.viewmodel.FragmentPage1ViewModel
 import java.util.*
 
-
-// TODO 通知バー
-// TODO QRでりんく？
-// TODO WebRTC？
-
 class FragmentPage1 : BaseFragment<FragmentPage1ViewModel>() {
-
     private val mediaProjectionManager: MediaProjectionManager?
         get() = context?.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager?
+
+    private lateinit var pairingUsecase: PairingUsecase
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
@@ -41,9 +38,16 @@ class FragmentPage1 : BaseFragment<FragmentPage1ViewModel>() {
         MLog.info(TAG, "onViewCreated")
         super.onViewCreated(view, savedInstanceState)
         vm = ViewModelProviders.of(this)[FragmentPage1ViewModel::class.java]
+        pairingUsecase = PairingUsecase(requireActivity())
+
+        initLiveData()
         onAttachLiveData()
         onAttachEvent()
         checkPermission()
+    }
+
+    override fun initLiveData() {
+        vm.buttonText.set("Start")
     }
 
     override fun onAttachLiveData() {
@@ -71,7 +75,9 @@ class FragmentPage1 : BaseFragment<FragmentPage1ViewModel>() {
                     MirroringService.stop(requireActivity())
                 }
                 else -> {
-                    MirroringService.start(requireActivity())
+                    pairingUsecase.scanUrl {
+                        MirroringService.start(requireActivity())
+                    }
                 }
             }
         }

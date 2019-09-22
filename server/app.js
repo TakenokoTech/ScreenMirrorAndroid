@@ -57,6 +57,13 @@ function webSocket(ws) {
   socket.addEventListener('open', e => {
     console.log('open');
     setInterval(() => socket.send('polling'), 60);
+    $('#qrcode').qrcode({
+      text: `ws://${websocketInput.value}:8080`,
+      width: 100,
+      height: 100,
+      background: '#fff',
+      foreground: '#000'
+    });
   });
   socket.addEventListener('message', e => {
     const data = e.data
@@ -82,13 +89,6 @@ submitButton.onclick = () => {
   webSocket(`ws://${websocketInput.value}:8080`)
   localStorage.setItem('websocketInput', websocketInput.value);
 
-  $('#qrcode').qrcode({
-    text: `ws://${websocketInput.value}:8080`,
-    width: 100,
-    height: 100,
-    background: '#fff',
-    foreground: '#000'
-  });
   $('.button-group').css('display', 'none');
   $('.qr-group').css('display', 'block');
   $('#image').css('display', 'block');

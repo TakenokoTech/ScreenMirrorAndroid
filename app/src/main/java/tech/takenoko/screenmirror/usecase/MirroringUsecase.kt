@@ -5,8 +5,6 @@ import android.graphics.Bitmap
 import android.media.ImageReader
 import android.media.MediaFormat
 import androidx.lifecycle.MutableLiveData
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import tech.takenoko.screenmirror.model.MediaProjectionModel
 import tech.takenoko.screenmirror.model.MirrorModel
 import tech.takenoko.screenmirror.model.WebSocketModel
@@ -27,14 +25,13 @@ class MirroringUsecase(private val context: Context): MirrorModel.MirrorCallback
 
     fun start() {
         MLog.info(TAG, "start")
-        MediaProjectionModel.projection = {
+        MediaProjectionModel.run(context) {
             runCatching {
                 mirrorModel.setMediaProjection(it)
                 webSocketModel.connect()
                 reader = mirrorModel.setupVirtualDisplay()
             }.exceptionOrNull()?.printStackTrace()
         }
-        MediaProjectionModel.run(context)
     }
 
     fun stop() {
@@ -49,7 +46,7 @@ class MirroringUsecase(private val context: Context): MirrorModel.MirrorCallback
     }
 
     override fun changeBitmap(image: Bitmap?) {
-        MLog.info(TAG, "changeBitmap")
+        MLog.debug(TAG, "changeBitmap")
         sending = if(!sending) true else return
         ByteArrayOutputStream().use { stream ->
             image?.compress(Bitmap.CompressFormat.JPEG, 50, stream).also {
@@ -63,7 +60,7 @@ class MirroringUsecase(private val context: Context): MirrorModel.MirrorCallback
     @Deprecated("not used")
     override fun handleByteArray(array: ByteArray) {
         if (webSocketModel.isOpen) {
-            MLog.info(TAG, "send")
+            MLog.info(TAG, "handleByteArray")
             webSocketModel.send(array)
         }
     }
