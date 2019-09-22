@@ -20,7 +20,7 @@ jobs:
         npm install
     - name: Build (webpack)
       run: |
-        npm build-webpack
+        npm run build-webpack
     - name: Build (windows)
       run: |
         npm run build-win
