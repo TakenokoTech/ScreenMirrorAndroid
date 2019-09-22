@@ -13,7 +13,7 @@ jobs:
           java-version: 1.8
       - name: Debug Build
         run: |
-          chmod +x ./gradlew && ./gradlew build
+          chmod +x ./gradlew && ./gradlew assembleDebug
 
   deploy:
     runs-on: ubuntu-latest
@@ -27,7 +27,14 @@ jobs:
         run: |
           chmod +x ./gradlew && ./gradlew assembleRelease
       - name: Deploy
+        with:
+          RELEASE_STORE_PASSWORD: ${{ secrets.RELEASE_STORE_PASSWORD }}
+          RELEASE_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
+          RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
+          DEPLOYGATE_USER: ${{ secrets.DEPLOYGATE_USER }}
+          DEPLOYGATE_API_KEY: ${{ secrets.DEPLOYGATE_API_KEY }}
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           JOB_CONTAINER_ID: ${{ job.container.id }}
           RELEASE_STORE_PASSWORD: ${{ secrets.RELEASE_STORE_PASSWORD }}
           RELEASE_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
