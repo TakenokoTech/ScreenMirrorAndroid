@@ -1,0 +1,33 @@
+<html>
+    <head>
+        <base href="./" />
+        <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: ws: blob: 'unsafe-inline'; " />
+        <link href="../node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+        <link href="./style.css" rel="stylesheet" />
+        <script src="../node_modules/jquery/dist/jquery.js"></script>
+        <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="../node_modules/popper.js/dist/umd/popper.js"></script>
+    </head>
+
+    <body>
+        <!-- <video id="v" autoplay controls></video> -->
+        <img id="image" />
+        <div id="form">
+            <div class="form-group">
+                <label for="exampleInputEmail1">WebSocket URL</label>
+                <input type="text" class="form-control" id="websocketInput" placeholder="ws://xxxxxx:8080" />
+                <small id="websocketSub" class="form-text text-muted">connecttion websocket</small>
+            </div>
+            <div class="button-group">
+                <button type="" id="submit" class="btn btn-primary">
+                    Submit
+                </button>
+            </div>
+            <div class="qr-group">
+                <div id="qrcode"></div>
+            </div>
+        </div>
+        <script type="text/javascript" src="app.js"></script>
+        <script src="../node_modules/jquery.qrcode/jquery.qrcode.min.js"></script>
+    </body>
+</html>
