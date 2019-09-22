@@ -4,16 +4,17 @@ on: [push]
 
 jobs:
   Build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        node-version: [8.x, 10.x, 12.x]
+        os: [macOS-latest, windows-latest, ubuntu-latest]
+        node: [8.x, 10.x, 12.x]
     steps:
     - uses: actions/checkout@v1
     - name: Setup Node.js
       uses: actions/setup-node@v1
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: ${{ matrix.node }}
     - name: Install
       run: |
         cd server
@@ -23,14 +24,17 @@ jobs:
         cd server
         npm run build-webpack
     - name: Build (windows)
+      if: matrix.os == 'windows-latest'
       run: |
         cd server
         npm run build-win
     - name: Build (mac)
+      if: matrix.os == 'macOS-latest'
       run: |
         cd server
         npm run build-mac
     - name: Build (linux)
+      if: matrix.os == 'ubuntu-latest'
       run: |
         cd server
         npm run build-linux
