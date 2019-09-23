@@ -23,7 +23,7 @@ archive.on('error', err => {
     throw err;
 });
 
-const input = __dirname + '/../build/' + targetPath;
+const input = __dirname + '/../build/' + TARGET_PATH;
 const output = fs.createWriteStream(input + '.zip');
 output.on('close', () => {
     console.log(archive.pointer() + ' total bytes');
