@@ -36,7 +36,10 @@
                 tools:replace="screenOrientation" />
         <service android:name=".service.MirroringService" >
             <intent-filter>
-                <action android:name=".service.MirroringService.CLOSE_BTN_INTENT" />
+                <action android:name="tech.takenoko.screenmirror.service.MirroringService.CLOSE_BTN_INTENT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.CONFIGURATION_CHANGED" />
             </intent-filter>
         </service>
     </application>

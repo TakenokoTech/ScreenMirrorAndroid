@@ -35,6 +35,13 @@ class MirroringUsecase(private val context: Context): MirrorModel.MirrorCallback
         }
     }
 
+    fun restart() {
+        MLog.info(TAG, "restart")
+        runCatching {
+            reader = mirrorModel.setupVirtualDisplay()
+        }.exceptionOrNull()?.printStackTrace()
+    }
+
     fun stop() {
         MLog.info(TAG, "stop")
         mirrorModel.disconnect()

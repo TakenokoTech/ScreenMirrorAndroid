@@ -1,8 +1,13 @@
 package tech.takenoko.screenmirror.service
 
-import android.app.*
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.app.Service
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Build
 import android.os.IBinder
 import android.widget.RemoteViews
@@ -47,6 +52,8 @@ class MirroringService : Service() {
             setStyle(NotificationCompat.DecoratedCustomViewStyle())
             setCustomContentView(remoteViews)
             setCustomBigContentView(remoteViews)
+            setContentTitle(NOTIFY_TITLE)
+            setContentText(NOTIFY_TEXT)
         }.build()
         startForeground(ID,customNotification)
 
@@ -55,15 +62,15 @@ class MirroringService : Service() {
 
     override fun onCreate() {
         MLog.info(TAG, "onCreate")
-
         super.onCreate()
         mirroringUsecase = MirroringUsecase(this)
         mirroringUsecase.start()
+        registerReceiver(configChangeBroadcastReciver, IntentFilter("android.intent.action.CONFIGURATION_CHANGED"))
     }
 
     override fun onDestroy() {
         MLog.info(TAG, "onDestroy")
-
+        unregisterReceiver(configChangeBroadcastReciver)
         mirroringUsecase.stop()
         super.onDestroy()
     }
@@ -71,6 +78,13 @@ class MirroringService : Service() {
     private fun createNotificationView(): RemoteViews {
         return RemoteViews(packageName, R.layout.notification_layout) .apply {
             setOnClickPendingIntent(R.id.notification_close_button, stopPendingIntent(this@MirroringService))
+        }
+    }
+
+    private val configChangeBroadcastReciver = object: BroadcastReceiver(){
+        override fun onReceive(context: Context?, intent: Intent?) {
+            MLog.info(TAG, "onReceive")
+            mirroringUsecase.restart()
         }
     }
 
@@ -82,7 +96,7 @@ class MirroringService : Service() {
         const val CHANNEL_DESC = "録画するよ"
         const val NOTIFY_TITLE = "ScreenMirror"
         const val NOTIFY_TEXT = "ミラーリング中だよ"
-        const val CLOSE_BTN_INTENT = ".service.MirroringService.CLOSE_BTN_INTENT"
+        const val CLOSE_BTN_INTENT = "tech.takenoko.screenmirror.service.MirroringService.CLOSE_BTN_INTENT"
 
         val start: (Context) -> Unit = {
             val intent = Intent(it, MirroringService::class.java)

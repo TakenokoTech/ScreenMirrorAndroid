@@ -64,9 +64,11 @@ class MirrorModel(private val metrics: DisplayMetrics, private val callback: Mir
     override fun onImageAvailable(reader: ImageReader) {
         MLog.debug(TAG, "onImageAvailable")
         reader.acquireLatestImage().use { img ->
-            val plane = img?.planes?.get(0) ?: return@use null
-            val bitmap = Bitmap.createBitmap(plane.rowStride / plane.pixelStride, metrics.heightPixels, Bitmap.Config.ARGB_8888).apply { copyPixelsFromBuffer(plane.buffer) }
-            callback.changeBitmap(bitmap)
+            kotlin.runCatching {
+                val plane = img?.planes?.get(0) ?: return@use null
+                val bitmap = Bitmap.createBitmap(plane.rowStride / plane.pixelStride, metrics.heightPixels, Bitmap.Config.ARGB_8888).apply { copyPixelsFromBuffer(plane.buffer) }
+                callback.changeBitmap(bitmap)
+            }
         }
     }
 
