@@ -26,7 +26,6 @@ const SCOPES = ['https://www.googleapis.com/auth/drive.file', 'https://www.googl
 const TOKEN_PATH = 'service_account_token';
 const SERVICE_TOKEN = process.env.SERVICE_TOKEN || '';
 const MAIL_ADDRESS = process.env.MAIL_ADDRESS || '';
-console.log('target path: ' + TARGET_PATH);
 
 const tokenPath = __dirname + '/../build/' + TOKEN_PATH + '.json';
 const targetZip = __dirname + '/../build/' + TARGET_PATH + '.zip';
@@ -57,7 +56,12 @@ const regexp = new RegExp(TARGET_PATH + '-([0-9]*)-([0-9]*).zip');
 })();
 
 async function saveToken() {
-    return new Promise((resoleve, reject) => {
+    return new Promise(async (resoleve, reject) => {
+        if (await isExist(tokenPath)) {
+            console.log('Token is exist. ', tokenPath);
+            resoleve(tokenPath);
+            return;
+        }
         fs.writeFile(tokenPath, SERVICE_TOKEN, err => {
             if (err) {
                 console.log(err);
@@ -142,5 +146,16 @@ async function listFiles(auth) {
             else console.log('No files found.');
             resoleve(res.data.files);
         });
+    });
+}
+
+async function isExist(filePath) {
+    return new Promise(resolve => {
+        try {
+            fs.statSync(filePath);
+            resolve(1);
+        } catch (e) {
+            resolve(0);
+        }
     });
 }
