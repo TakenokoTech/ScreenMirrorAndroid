@@ -4,9 +4,6 @@ import express, { NextFunction, Request, Response } from 'express';
 import { connectLogger, Log } from '../utils/Log';
 import { GetAdress } from './express/GetAdress';
 
-// import { getLocalAddress } from '../utils/Network';
-// let localAddress = getLocalAddress();
-
 const app = express();
 app.use(connectLogger);
 app.use('*', cors());

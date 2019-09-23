@@ -2,7 +2,7 @@ var os = require('os');
 
 export function getLocalAddress() {
     const ifacesObj = { ipv4: [], ipv6: [] };
-    for (let dev in interfaces) {
+    for (let dev in os.networkInterfaces()) {
         os.networkInterfaces()[dev].forEach(details => {
             if (!details.internal) {
                 switch (details.family) {

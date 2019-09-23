@@ -3,8 +3,8 @@ body {
 }
 
 img {
-    height: 95%;
-    margin: 16px;
+    height: 100%;
+    padding: 16px;
     border-top: 8px solid #000;
     border-bottom: 8px solid #000;
     display: none;
@@ -16,14 +16,63 @@ img {
     right: 0px;
     width: 300px;
     background-color: #FCFCFC;
-    padding: 16px;
     margin: 16px;
     border: 1px solid #CCC;
     border-radius: 8px;
 }
 
-.button-group {
-    text-align: left;
+#title {
+    text-align: center;
+    font-size: 1rem
+}
+
+.form-group {
+    margin: 1.0rem !important;
+}
+
+#address-group {
+    padding-top: 8px;
+    overflow: hidden;
+}
+
+#address-group div {
+    margin-top: 4px;
+    margin-right: 4px;
+    cursor: pointer;
+}
+
+#address-group div:hover {
+    color: #fff;
+    background-color: #999;
+    border-color: #999;
+}
+
+#button-group {
+    text-align: right;
+}
+
+#submit-button {
+    border: 1px solid transparent;
+    box-sizing: border-box;
+    border-radius: 16px;
+    min-width: 90px;
+
+}
+
+#submit-button.open-button {
+    background-color: #00A497;
+    color: #FFF;
+}
+
+#submit-button.close-button {
+    background-color: #DE0D81;
+    color: #FFF;
+}
+
+#form #dorder {
+    width: 100%;
+    height: 2px;
+    background-color: #EEE;
 }
 
 .qr-group {

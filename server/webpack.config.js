@@ -1,9 +1,14 @@
+const webpack = require('webpack');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
-const entry = {
+const electronMainEntry = {
     main: './src/main',
+};
+
+const electronRendererEntry = {
+    renderer: './src/renderer',
 };
 
 const babelRule = {
@@ -22,40 +27,51 @@ const cssRule = {
 };
 
 const plugins = [
-    // new HtmlWebpackPlugin({ template: './static/index.html' }),
+    new HtmlWebpackPlugin({ template: './static/index.html' }),
     // new CopyWebpackPlugin([{ from: '.', to: '.', ignore: ['!*.html'] }], { context: 'static' }),
-    // new CopyWebpackPlugin([{ from: '.', to: './css', ignore: ['!*.css'] }], { context: 'static/css' }),
+    new CopyWebpackPlugin([{ from: '.', to: '.', ignore: ['!*.css'] }], { context: 'static' }),
     // new CopyWebpackPlugin([{ from: ".", to: "./js", ignore: ["!*.js"] }], { context: "static/js" }),
     // new CopyWebpackPlugin([{ from: '.', to: './assets', ignore: ['!*'] }], { context: 'static/assets' }),
     // new CopyWebpackPlugin([{ from: ".", to: "./", ignore: ["!sw.js"] }], { context: "static/" }),
     // new CopyWebpackPlugin([{ from: '.', to: './', ignore: ['!manifest.json'] }], { context: 'static/' }),
+    new webpack.ProvidePlugin({ $: 'jquery', jQuery: 'jquery' }),
 ];
 
-const development = {
-    entry: entry,
+const developmentMain = {
+    entry: electronMainEntry,
     target: 'electron-main',
-    output: {
-        path: path.resolve(__dirname, 'dist'),
-        filename: '[name].js?[hash]',
-    },
+    output: { path: path.resolve(__dirname, 'dist'), filename: '[name].js?[hash]' },
+    resolve: { extensions: ['.tsx', '.ts', '.js', '.json'] },
+    module: { rules: [babelRule, cssRule] },
+    devtool: 'inline-source-map',
+    devServer: { disableHostCheck: true },
+};
+
+const developmentRenderer = {
+    entry: electronRendererEntry,
+    target: 'electron-renderer',
+    output: { path: path.resolve(__dirname, 'dist'), filename: '[name].js?[hash]' },
     resolve: { extensions: ['.tsx', '.ts', '.js', '.json'] },
     module: { rules: [babelRule, cssRule] },
     plugins: plugins,
     devtool: 'inline-source-map',
-    devServer: {
-        // host: '0.0.0.0',
-        disableHostCheck: true,
-    },
+    devServer: { disableHostCheck: true },
 };
 
-const production = {
+const productionMain = {
     mode: 'production',
-    entry: entry,
+    entry: electronMainEntry,
     target: 'electron-main',
-    output: {
-        path: path.resolve(__dirname, 'dist'),
-        filename: '[name].js?[hash]',
-    },
+    output: { path: path.resolve(__dirname, 'dist'), filename: '[name].js?[hash]' },
+    resolve: { extensions: ['.tsx', '.ts', '.js', '.json'] },
+    module: { rules: [babelRule, cssRule] },
+};
+
+const productionRenderer = {
+    mode: 'production',
+    entry: electronRendererEntry,
+    target: 'electron-renderer',
+    output: { path: path.resolve(__dirname, 'dist'), filename: '[name].js?[hash]' },
     resolve: { extensions: ['.tsx', '.ts', '.js', '.json'] },
     module: { rules: [babelRule, cssRule] },
     plugins: plugins,
@@ -63,8 +79,8 @@ const production = {
 
 if ((process.env.NODE_ENV || '').trim() != 'production') {
     console.log('NODE_ENV', 'development');
-    module.exports = development;
+    module.exports = [developmentMain, developmentRenderer];
 } else {
     console.log('NODE_ENV', 'production');
-    module.exports = production;
+    module.exports = [productionMain, productionRenderer];
 }

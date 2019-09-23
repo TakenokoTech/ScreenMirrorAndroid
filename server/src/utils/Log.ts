@@ -31,3 +31,5 @@ class log {
 
 export const connectLogger = log4js.connectLogger(accessLogger, {});
 export const Log = new log();
+
+console.log('');
