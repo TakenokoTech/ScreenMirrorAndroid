@@ -34,8 +34,11 @@
                 android:name="com.journeyapps.barcodescanner.CaptureActivity"
                 android:screenOrientation="fullSensor"
                 tools:replace="screenOrientation" />
-        <service
-                android:name=".service.MirroringService" />
+        <service android:name=".service.MirroringService" >
+            <intent-filter>
+                <action android:name=".service.MirroringService.CLOSE_BTN_INTENT" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

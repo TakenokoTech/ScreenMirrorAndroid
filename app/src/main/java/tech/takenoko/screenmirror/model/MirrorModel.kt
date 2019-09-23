@@ -33,8 +33,8 @@ class MirrorModel(private val metrics: DisplayMetrics, private val callback: Mir
         runCatching {
             virtualDisplay?.release()
             mediaProjection?.stop()
-            codec.stop()
-            codec.release()
+            // codec.stop()
+            // codec.release()
         }.exceptionOrNull()?.printStackTrace()
         setState(StatesType.Stop)
     }

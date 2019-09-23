@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import tech.takenoko.screenmirror.model.MediaProjectionModel
 import tech.takenoko.screenmirror.model.MirrorModel
 import tech.takenoko.screenmirror.model.WebSocketModel
+import tech.takenoko.screenmirror.service.MirroringService
 import tech.takenoko.screenmirror.utils.MLog
 import java.io.ByteArrayOutputStream
 
@@ -47,6 +48,7 @@ class MirroringUsecase(private val context: Context): MirrorModel.MirrorCallback
 
     override fun changeBitmap(image: Bitmap?) {
         MLog.debug(TAG, "changeBitmap")
+        if(!webSocketModel.isOpen) MirroringService.stop(context)
         sending = if(!sending) true else return
         ByteArrayOutputStream().use { stream ->
             image?.compress(Bitmap.CompressFormat.JPEG, 50, stream).also {

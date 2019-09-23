@@ -1,6 +1,7 @@
 package tech.takenoko.screenmirror.utils
 
 import android.util.Log
+import tech.takenoko.screenmirror.BuildConfig
 
 object MLog {
     private const val LOG_FORMAT: String = "<Log>%s"
@@ -11,7 +12,9 @@ object MLog {
     }
 
     fun debug(tag: String?, msg: String) {
-        Log.d(String.format(LOG_FORMAT, tag, isCurrent()), msg)
+        if (BuildConfig.DEBUG) {
+            Log.d(String.format(LOG_FORMAT, tag, isCurrent()), msg)
+        }
     }
 
     fun info(tag: String?, msg: String) {

@@ -2,4 +2,7 @@
     <string name="app_name">ScreenMirrorApp</string>
     <string name="button">BUTTON</string>
     <string name="todo">TODO</string>
+
+    <string name="notificationTitle">ScreenMirror</string>
+    <string name="notificationSubTitle">ミラーリング中だよ</string>
 </resources>
