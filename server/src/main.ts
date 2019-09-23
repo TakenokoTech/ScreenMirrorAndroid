@@ -58,3 +58,5 @@ app.on('activate', () => {
         createWindow();
     }
 });
+
+app.commandLine.appendSwitch('disable-gpu');
