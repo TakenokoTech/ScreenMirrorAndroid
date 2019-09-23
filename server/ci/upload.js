@@ -3,13 +3,29 @@ const path = require('path');
 const readline = require('readline');
 const { google } = require('googleapis');
 
+let TARGET_PATH = '';
+switch (process.env.TARGET_OS || '') {
+    case 'windows-latest':
+        TARGET_PATH = 'ScreenMirrorApp-win32-x64';
+        break;
+    case 'macOS-latest':
+        TARGET_PATH = 'ScreenMirrorApp-darwin-x64';
+        break;
+    case 'ubuntu-latest':
+        TARGET_PATH = 'ScreenMirrorApp-linux-x64';
+        break;
+    default:
+        TARGET_PATH = 'ScreenMirrorApp-win32-x64';
+        break;
+}
+console.log('target path: ' + TARGET_PATH);
+
 let BUILD_VERSION = Math.floor(new Date().getTime() / 1000);
 let REVISION_VERSION = 1;
 const SCOPES = ['https://www.googleapis.com/auth/drive.file', 'https://www.googleapis.com/auth/drive.appdata'];
 const TOKEN_PATH = 'service_account_token';
 const SERVICE_TOKEN = process.env.SERVICE_TOKEN || '';
 const MAIL_ADDRESS = process.env.MAIL_ADDRESS || '';
-const TARGET_PATH = process.env.TARGET_PATH || '';
 console.log('target path: ' + TARGET_PATH);
 
 const tokenPath = __dirname + '/../build/' + TOKEN_PATH + '.json';

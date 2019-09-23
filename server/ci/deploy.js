@@ -1,12 +1,22 @@
 const fs = require('fs');
 const archiver = require('archiver');
 
-const targetPath = process.env.TARGET_PATH || '';
-console.log('target path: ' + targetPath);
-
-if (!targetPath || targetPath == '') {
-    process.exit();
+let TARGET_PATH = '';
+switch (process.env.TARGET_OS || '') {
+    case 'windows-latest':
+        TARGET_PATH = 'ScreenMirrorApp-win32-x64';
+        break;
+    case 'macOS-latest':
+        TARGET_PATH = 'ScreenMirrorApp-darwin-x64';
+        break;
+    case 'ubuntu-latest':
+        TARGET_PATH = 'ScreenMirrorApp-linux-x64';
+        break;
+    default:
+        TARGET_PATH = 'ScreenMirrorApp-win32-x64';
+        break;
 }
+console.log('target path: ' + TARGET_PATH);
 
 const archive = archiver('zip', { zlib: { level: 9 } });
 archive.on('error', err => {
