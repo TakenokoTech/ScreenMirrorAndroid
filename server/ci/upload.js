@@ -28,9 +28,10 @@ const regexp = new RegExp(TARGET_PATH + '-([0-9]*)-([0-9]*).zip');
         REVISION_VERSION = Math.max(REVISION_VERSION, +revision + 1);
     });
     // Delete File
+    console.log('\n[deleteFile]');
     const promiseAll = oldFiles.map(file => {
         const revision = regexp.test(file.name) ? regexp.exec(file.name)[2] : null;
-        if (+revision <= REVISION_VERSION - 3) return deleteFile(auth, file.id);
+        if (revision != null && +revision <= REVISION_VERSION - 3) return deleteFile(auth, file.id);
     });
     await Promise.all(promiseAll);
     // Create File
@@ -81,7 +82,7 @@ async function createFile(auth) {
 }
 
 async function deleteFile(auth, fileId) {
-    console.log('\n[deleteFile]');
+    // console.log('\n[deleteFile]');
     return new Promise((resoleve, reject) => {
         google.drive({ version: 'v3', auth }).files.delete({ fileId: fileId }, (err, res) => {
             if (err) {

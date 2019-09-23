@@ -38,6 +38,7 @@ const plugins = [
 ];
 
 const developmentMain = {
+    mode: 'development',
     entry: electronMainEntry,
     target: 'electron-main',
     output: { path: path.resolve(__dirname, 'dist'), filename: '[name].js?[hash]' },
@@ -48,6 +49,7 @@ const developmentMain = {
 };
 
 const developmentRenderer = {
+    mode: 'development',
     entry: electronRendererEntry,
     target: 'electron-renderer',
     output: { path: path.resolve(__dirname, 'dist'), filename: '[name].js?[hash]' },
