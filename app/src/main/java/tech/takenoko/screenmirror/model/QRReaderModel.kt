@@ -12,6 +12,7 @@ import java.net.URI
 class QRReaderModel : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        MLog.info(TAG, "onCreate")
         super.onCreate(savedInstanceState)
         IntentIntegrator(this).also {
             it.setPrompt("WebSocket URLを読み込みます")
@@ -21,6 +22,7 @@ class QRReaderModel : Activity() {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        MLog.info(TAG, "onActivityResult")
         val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
         if (result != null) {
             MLog.info(TAG, result.contents)
