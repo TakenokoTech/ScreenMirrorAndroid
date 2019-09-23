@@ -28,16 +28,6 @@ jobs:
       run: |
         cd server
         npm run build-win
-    - name: Build (mac)
-      if: matrix.os == 'macOS-latest'
-      run: |
-        cd server
-        npm run build-mac
-    - name: Build (linux)
-      if: matrix.os == 'ubuntu-latest'
-      run: |
-        cd server
-        npm run build-linux
     - name: Deploy (windows)
       if: matrix.os == 'windows-latest' && matrix.node == '12.x'
       env:
@@ -48,6 +38,11 @@ jobs:
         cd server
         npm run deploy
         npm run upload
+    - name: Build (mac)
+      if: matrix.os == 'macOS-latest'
+      run: |
+        cd server
+        npm run build-mac
     - name: Deploy (mac)
       if: matrix.os == 'macOS-latest' && matrix.node == '12.x'
       env:
@@ -58,6 +53,11 @@ jobs:
         cd server
         npm run deploy
         npm run upload
+    - name: Build (linux)
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        cd server
+        npm run build-linux
     - name: Deploy (linux)
       if: matrix.os == 'ubuntu-latest' && matrix.node == '12.x'
       env:
