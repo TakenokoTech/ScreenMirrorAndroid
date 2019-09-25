@@ -2,14 +2,19 @@
 
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
-        <ripple android:color="@color/colorPrimary_focused">
+        <ripple android:color="@color/colorAccent_focused">
             <item>
                 <shape android:shape="oval">
                     <size android:width="100dp" android:height="100dp" />
-                    <solid android:color="#FFF" />
+                    <solid android:color="@color/colorAccent" />
                 </shape>
             </item>
         </ripple>
     </item>
+    <item android:drawable="@drawable/ic_cast"
+            android:top="16dp"
+            android:bottom="16dp"
+            android:left="16dp"
+            android:right="16dp" />
 </layer-list>
 

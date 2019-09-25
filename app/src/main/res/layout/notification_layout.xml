@@ -12,13 +12,16 @@
         android:baselineAligned="false">
 
     <LinearLayout
+            android:id="@+id/notificationLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
             android:layout_marginTop="0dp"
             android:layout_marginEnd="0dp"
             android:orientation="vertical"
-            android:layout_weight="1">
+            android:layout_weight="1"
+            android:focusable="true"
+            android:clickable="true">
 
         <TextView
                 android:id="@+id/notificationTitle"
@@ -51,12 +54,12 @@
             android:orientation="horizontal">
 
         <Button
-                android:id="@+id/notification_close_button"
+                android:id="@+id/notificationCloseButton"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
                 android:layout_marginEnd="0dp"
                 android:layout_marginBottom="0dp"
-                android:background="@drawable/shape_circle_button"
+                android:background="@drawable/shape_close_button"
                 android:text="" />
     </LinearLayout>
 

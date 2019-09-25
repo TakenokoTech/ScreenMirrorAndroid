@@ -1,41 +1,140 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
-        android:orientation="vertical"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="#F6F6F6">
 
-    <ImageView
-            android:id="@+id/image"
-            android:layout_width="240dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="32dp"
-            android:layout_marginTop="16dp"
-            android:adjustViewBounds="true"
-            android:contentDescription="@string/todo"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-            android:id="@+id/button"
+    <View
+            android:id="@+id/view2"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
-            android:text="@string/button"
+            android:layout_height="48dp"
+            android:background="#FFF"
+            android:elevation="4dp"
+            android:orientation="horizontal"
+            app:layout_constrainedHeight="false"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    <View
+            android:id="@+id/view"
+            android:layout_width="92dp"
+            android:layout_height="92dp"
+            android:background="@drawable/shape_circle_button"
+            android:elevation="4dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
-    <TextView
-            android:id="@+id/dateText"
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_marginEnd="32dp"
-            android:layout_marginBottom="32dp"
+    <ImageView
+            android:id="@+id/button"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/shape_cast_button"
             android:text=""
-            app:layout_constraintBottom_toTopOf="@+id/button"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:elevation="8dp"
+            android:contentDescription="@string/button" />
+
+    <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="48dp"
+            android:elevation="4dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/button"
+            app:layout_constraintStart_toStartOf="parent">
+        <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+        <!--
+        <Button
+                style="@style/BorderlessButton"
+                android:id="@+id/select_button1"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:elevation="0dp"
+                android:text="@string/button"
+                app:layout_constraintStart_toStartOf="@+id/view2"
+                app:layout_constraintTop_toTopOf="@+id/view2" />
+        -->
+        <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+        <!--
+        <Button
+                style="@style/BorderlessButton"
+                android:id="@+id/select_button2"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:elevation="0dp"
+                android:text=""
+                app:icon="@drawable/ic_close"
+                app:layout_constraintEnd_toStartOf="@+id/view"
+                app:layout_constraintTop_toTopOf="@+id/view2" />
+        -->
+        <Space
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/castLayout"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
+            app:layout_constraintBottom_toTopOf="@+id/view"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="invisible"
+            tools:visibility="visible">
+
+        <ImageView
+                android:id="@+id/image"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                android:adjustViewBounds="true"
+                android:background="#FFF"
+                android:contentDescription="@string/todo"
+                android:elevation="1dp"
+                android:padding="16dp"
+                app:layout_constraintBottom_toTopOf="@+id/dateText"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+                android:id="@+id/dateText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="8dp"
+                android:background="#FFF"
+                android:elevation="1dp"
+                android:padding="16dp"
+                android:text=""
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:text="2999/12/31 00:00:00.000" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

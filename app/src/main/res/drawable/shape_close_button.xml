@@ -6,10 +6,15 @@
             <item>
                 <shape android:shape="oval">
                     <size android:width="100dp" android:height="100dp" />
-                    <solid android:color="#FFF" />
+                    <solid android:color="@color/colorNotificationBack" />
                 </shape>
             </item>
         </ripple>
     </item>
+    <item android:drawable="@drawable/ic_close"
+            android:top="4dp"
+            android:bottom="4dp"
+            android:left="4dp"
+            android:right="4dp" />
 </layer-list>
 

@@ -52,13 +52,22 @@ class FragmentPage1 : BaseFragment<FragmentPage1ViewModel>() {
 
     override fun onAttachLiveData() {
         MLog.info(TAG, "onAttachLiveData")
-        vm.buttonText.observe { view?.button?.text = it }
+        // vm.buttonText.observe { view?.button?.text = it }
         vm.dateText.observe { view?.dateText?.text = it }
         MirroringUsecase.stateLivaData.observe(this, Observer{
             when (it) {
-                MirrorModel.StatesType.Waiting -> vm.buttonText.set("Cancel")
-                MirrorModel.StatesType.Running -> vm.buttonText.set("Stop")
-                else -> vm.buttonText.set("Start")
+                MirrorModel.StatesType.Waiting -> {
+                    vm.buttonText.set("Cancel")
+                    view?.castLayout?.visibility = View.INVISIBLE
+                }
+                MirrorModel.StatesType.Running -> {
+                    vm.buttonText.set("Stop")
+                    view?.castLayout?.visibility = View.VISIBLE
+                }
+                else -> {
+                    vm.buttonText.set("Start")
+                    view?.castLayout?.visibility = View.INVISIBLE
+                }
             }
         })
         MirroringUsecase.imageLivaData.observe(this, Observer {
