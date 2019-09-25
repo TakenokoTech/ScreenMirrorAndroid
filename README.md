@@ -13,4 +13,4 @@ electron app is [here](https://github.com/TakenokoTech/ScreenMirrorAndroid/tree/
  - GitHub Actions
 
 ## ScreenShot
-<img src="./.github/images/android-app.jpg" width=400>
+<img src="./.github/images/android-app.png" width=400>
