@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SeekBar
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
@@ -58,14 +59,17 @@ class FragmentPage1 : BaseFragment<FragmentPage1ViewModel>() {
             when (it) {
                 MirrorModel.StatesType.Waiting -> {
                     vm.buttonText.set("Cancel")
+                    view?.castButton?.background = resources.getDrawable(R.drawable.shape_cast_button,null)
                     view?.castLayout?.visibility = View.INVISIBLE
                 }
                 MirrorModel.StatesType.Running -> {
                     vm.buttonText.set("Stop")
+                    view?.castButton?.background = resources.getDrawable(R.drawable.shape_close_button,null)
                     view?.castLayout?.visibility = View.VISIBLE
                 }
                 else -> {
                     vm.buttonText.set("Start")
+                    view?.castButton?.background = resources.getDrawable(R.drawable.shape_cast_button,null)
                     view?.castLayout?.visibility = View.INVISIBLE
                 }
             }
@@ -78,7 +82,7 @@ class FragmentPage1 : BaseFragment<FragmentPage1ViewModel>() {
 
     override fun onAttachEvent() {
         MLog.info(TAG, "onAttachEvent")
-        view?.button?.setOnClickListener {
+        view?.castButton?.setOnClickListener {
             when (MirrorModel.states) {
                 MirrorModel.StatesType.Waiting, MirrorModel.StatesType.Running -> {
                     MirroringService.stop(requireActivity())
@@ -90,6 +94,14 @@ class FragmentPage1 : BaseFragment<FragmentPage1ViewModel>() {
                 }
             }
         }
+        view?.qualitySeekBar?.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                MirroringUsecase.QUALITY = progress
+                view?.qualityText?.text = "${progress}"
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
     }
 
     private fun checkPermission() {

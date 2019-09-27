@@ -5,10 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.PixelFormat
 import android.hardware.display.DisplayManager
 import android.hardware.display.VirtualDisplay
-import android.media.ImageReader
-import android.media.MediaCodec
-import android.media.MediaCodecInfo
-import android.media.MediaFormat
+import android.media.*
 import android.media.projection.MediaProjection
 import android.util.DisplayMetrics
 import android.view.Surface
@@ -23,6 +20,9 @@ class MirrorModel(private val metrics: DisplayMetrics, private val callback: Mir
     private var virtualDisplay: VirtualDisplay? = null
     private lateinit var inputSurface: Surface
     private lateinit var codec: MediaCodec
+
+    private lateinit var heepPlane: Image.Plane
+    private lateinit var heepBitmap: Bitmap
 
     fun setMediaProjection(mediaProjection: MediaProjection?) {
         this.mediaProjection = mediaProjection
@@ -46,7 +46,7 @@ class MirrorModel(private val metrics: DisplayMetrics, private val callback: Mir
         val width = metrics.widthPixels * scale
         val height = metrics.heightPixels * scale
         val dpi = metrics.densityDpi
-        val reader = ImageReader.newInstance(width, height, PixelFormat.RGBA_8888, 2).also { it.setOnImageAvailableListener(this, null) }
+        val reader = ImageReader.newInstance(width, height, FORMAT, 2).also { it.setOnImageAvailableListener(this, null) }
         virtualDisplay = mediaProjection?.createVirtualDisplay(
             "Capturing Display",
             width,
@@ -64,10 +64,10 @@ class MirrorModel(private val metrics: DisplayMetrics, private val callback: Mir
     override fun onImageAvailable(reader: ImageReader) {
         MLog.debug(TAG, "onImageAvailable")
         reader.acquireLatestImage().use { img ->
-            kotlin.runCatching {
-                val plane = img?.planes?.get(0) ?: return@use null
-                val bitmap = Bitmap.createBitmap(plane.rowStride / plane.pixelStride, metrics.heightPixels, Bitmap.Config.ARGB_8888).apply { copyPixelsFromBuffer(plane.buffer) }
-                callback.changeBitmap(bitmap)
+            runCatching {
+                heepPlane = img?.planes?.get(0) ?: return@use null
+                heepBitmap = Bitmap.createBitmap(heepPlane.rowStride / heepPlane.pixelStride, metrics.heightPixels, CONFIG).apply { copyPixelsFromBuffer(heepPlane.buffer) }
+                callback.changeBitmap(heepBitmap)
             }
         }
     }
@@ -132,6 +132,9 @@ class MirrorModel(private val metrics: DisplayMetrics, private val callback: Mir
         val TAG: String = MirrorModel::class.java.simpleName
         val MEDIA_TAG: String = MediaCodec::class.java.simpleName
         var states: StatesType = StatesType.Stop; private set
+
+        var FORMAT: Int = PixelFormat.RGBA_8888
+        var CONFIG: Bitmap.Config = Bitmap.Config.ARGB_8888
     }
 
     interface MirrorCallback {

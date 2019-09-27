@@ -26,7 +26,7 @@ app.on('ready', () => {
 
     // 開発者ツールを開く
     win.webContents.once('dom-ready', () => {
-        win.webContents.openDevTools();
+        // win.webContents.openDevTools();
     });
 
     // ウィンドウが閉じられた時に発火

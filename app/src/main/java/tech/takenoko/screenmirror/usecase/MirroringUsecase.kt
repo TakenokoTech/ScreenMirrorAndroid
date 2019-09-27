@@ -11,6 +11,9 @@ import tech.takenoko.screenmirror.model.WebSocketModel
 import tech.takenoko.screenmirror.service.MirroringService
 import tech.takenoko.screenmirror.utils.MLog
 import java.io.ByteArrayOutputStream
+import android.R.array
+import android.R.attr.bitmap
+import java.nio.ByteBuffer
 
 
 class MirroringUsecase(private val context: Context): MirrorModel.MirrorCallback, WebSocketModel.WebSocketCallback {
@@ -53,16 +56,31 @@ class MirroringUsecase(private val context: Context): MirrorModel.MirrorCallback
         stateLivaData.value = MirrorModel.states
     }
 
+    var startTime = System.currentTimeMillis()
     override fun changeBitmap(image: Bitmap?) {
         MLog.debug(TAG, "changeBitmap")
         if(!webSocketModel.isOpen) MirroringService.stop(context)
+
         sending = if(!sending) true else return
         ByteArrayOutputStream().use { stream ->
-            image?.compress(Bitmap.CompressFormat.JPEG, 50, stream).also {
+            image?.compress(Bitmap.CompressFormat.JPEG, QUALITY, stream).also {
                 sending = false
                 webSocketModel.send(stream.toByteArray())
+                MLog.info(TAG, "${System.currentTimeMillis() - startTime}")
+                startTime = System.currentTimeMillis()
             }
         }
+
+        /*
+        if(image != null) {
+            val alloc = ByteBuffer.allocate(image.byteCount)
+            image.copyPixelsToBuffer(alloc)
+            webSocketModel.send(alloc.array())
+            MLog.info(TAG, "${System.currentTimeMillis() - startTime}")
+            startTime = System.currentTimeMillis()
+        }
+        */
+
         imageLivaData.value = image
     }
 
@@ -76,6 +94,7 @@ class MirroringUsecase(private val context: Context): MirrorModel.MirrorCallback
 
     companion object {
         val TAG: String = MirroringUsecase::class.java.simpleName
+        var QUALITY = 80
         val CODEC = listOf(
             MediaFormat.MIMETYPE_VIDEO_AVC,
             MediaFormat.MIMETYPE_VIDEO_HEVC,

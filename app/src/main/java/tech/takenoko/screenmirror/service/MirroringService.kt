@@ -62,7 +62,6 @@ class MirroringService : Service() {
             setCustomContentView(remoteViews)
             setCustomBigContentView(remoteViews)
             setContentTitle(NOTIFY_TITLE)
-            setContentText(NOTIFY_TEXT)
         }.build())
 
         return START_NOT_STICKY
