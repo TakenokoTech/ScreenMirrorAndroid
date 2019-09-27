@@ -9,7 +9,7 @@ electron app is [here](https://github.com/TakenokoTech/ScreenMirrorAndroid/tree/
  - Java-WebSocket
  - zxing-android-embedded
 
-# CI/CD
+## CI/CD
  - GitHub Actions
 
 ## ScreenShot
