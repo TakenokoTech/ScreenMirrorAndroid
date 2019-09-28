@@ -10,15 +10,14 @@ import android.media.projection.MediaProjection
 import android.util.DisplayMetrics
 import android.view.Surface
 import tech.takenoko.screenmirror.utils.MLog
+import java.nio.Buffer
 
 
-class MirrorModel(private val metrics: DisplayMetrics, private val callback: MirrorCallback) :
-    ImageReader.OnImageAvailableListener {
+class MirrorModel(private val metrics: DisplayMetrics, val callback: MirrorCallback) : ImageReader.OnImageAvailableListener {
     enum class StatesType { Stop, Waiting, Running }
 
     private var mediaProjection: MediaProjection? = null
     private var virtualDisplay: VirtualDisplay? = null
-    private lateinit var inputSurface: Surface
     private lateinit var codec: MediaCodec
 
     private lateinit var heepPlane: Image.Plane
@@ -52,7 +51,7 @@ class MirrorModel(private val metrics: DisplayMetrics, private val callback: Mir
             width,
             height,
             dpi,
-            DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, /*inputSurface*/
+            DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
             reader!!.surface,
             null,
             null
@@ -74,13 +73,10 @@ class MirrorModel(private val metrics: DisplayMetrics, private val callback: Mir
 
     //エンコーダの準備
     @Deprecated("not used")
-    fun prepareEncoder() {
+    fun prepareEncoder(): Surface {
         MLog.info(TAG, "prepareEncoder")
         val mineType = MediaFormat.MIMETYPE_VIDEO_VP8
-        val scale = 1
-        val width = metrics.widthPixels * scale
-        val height = metrics.heightPixels * scale
-        val format = MediaFormat.createVideoFormat(mineType, width, height).apply {
+        val format = MediaFormat.createVideoFormat(mineType,  metrics.widthPixels, metrics.heightPixels).apply {
             setInteger(
                 MediaFormat.KEY_COLOR_FORMAT,
                 MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface
@@ -92,35 +88,20 @@ class MirrorModel(private val metrics: DisplayMetrics, private val callback: Mir
             setInteger(MediaFormat.KEY_MAX_INPUT_SIZE, 0)
         }
         codec = MediaCodec.createEncoderByType(mineType)
-        codec.setCallback(mediaCodecCallback)
-        codec.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE)
-        inputSurface = codec.createInputSurface()
-        codec.start()
-    }
-
-    private val mediaCodecCallback = object : MediaCodec.Callback() {
-        override fun onOutputBufferAvailable(codec: MediaCodec, index: Int, info: MediaCodec.BufferInfo) {
-            MLog.debug(MEDIA_TAG, "onOutputBufferAvailable : $info")
-            codec.getOutputBuffer(index)?.also {
-                callback.handleByteArray(ByteArray(it.limit()).apply { it.get(this@apply) })
+        codec.setCallback(object : MediaCodec.Callback() {
+            override fun onOutputBufferAvailable(codec: MediaCodec, index: Int, info: MediaCodec.BufferInfo) {
+                MLog.debug(MEDIA_TAG, "onOutputBufferAvailable : $info")
+                codec.getOutputBuffer(index)?.also { callback.handleByteArray(it) }
+                codec.releaseOutputBuffer(index, false)
             }
-            codec.releaseOutputBuffer(index, false)
-        }
-
-        override fun onOutputFormatChanged(codec: MediaCodec, format: MediaFormat) {
-            MLog.debug(
-                MEDIA_TAG,
-                "onOutputFormatChanged : ${format.getString(MediaFormat.KEY_MIME)}"
-            )
-        }
-
-        override fun onInputBufferAvailable(codec: MediaCodec, index: Int) {
-            MLog.info(MEDIA_TAG, "onInputBufferAvailable : ${codec.codecInfo}")
-        }
-
-        override fun onError(codec: MediaCodec, e: MediaCodec.CodecException) {
-            MLog.info(MEDIA_TAG, "onError : $e")
-        }
+            override fun onOutputFormatChanged(codec: MediaCodec, format: MediaFormat) { MLog.debug(MEDIA_TAG, "onOutputFormatChanged : ${format.getString(MediaFormat.KEY_MIME)}") }
+            override fun onInputBufferAvailable(codec: MediaCodec, index: Int) { MLog.info(MEDIA_TAG, "onInputBufferAvailable : ${codec.codecInfo}") }
+            override fun onError(codec: MediaCodec, e: MediaCodec.CodecException) { MLog.info(MEDIA_TAG, "onError : $e") }
+        })
+        codec.configure(format, null, null, MediaCodec.CONFIGURE_FLAG_ENCODE)
+        val surface = codec.createInputSurface()
+        codec.start()
+        return surface
     }
 
     private fun setState(states: StatesType) {
@@ -140,6 +121,6 @@ class MirrorModel(private val metrics: DisplayMetrics, private val callback: Mir
     interface MirrorCallback {
         fun changeState()
         fun changeBitmap(image: Bitmap?)
-        fun handleByteArray(array: ByteArray)
+        fun handleByteArray(array: Buffer)
     }
 }

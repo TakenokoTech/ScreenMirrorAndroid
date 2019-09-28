@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.media.ImageReader
 import android.media.MediaFormat
+import android.view.Surface
 import androidx.lifecycle.MutableLiveData
 import tech.takenoko.screenmirror.model.MediaProjectionModel
 import tech.takenoko.screenmirror.model.MirrorModel
@@ -11,9 +12,7 @@ import tech.takenoko.screenmirror.model.WebSocketModel
 import tech.takenoko.screenmirror.service.MirroringService
 import tech.takenoko.screenmirror.utils.MLog
 import java.io.ByteArrayOutputStream
-import android.R.array
-import android.R.attr.bitmap
-import java.nio.ByteBuffer
+import java.nio.Buffer
 
 
 class MirroringUsecase(private val context: Context): MirrorModel.MirrorCallback, WebSocketModel.WebSocketCallback {
@@ -22,6 +21,7 @@ class MirroringUsecase(private val context: Context): MirrorModel.MirrorCallback
 
     private var reader: ImageReader? = null
     private var sending: Boolean = false
+    private var surface: Surface? = null
 
     init {
         changeState()
@@ -33,6 +33,7 @@ class MirroringUsecase(private val context: Context): MirrorModel.MirrorCallback
             runCatching {
                 mirrorModel.setMediaProjection(it)
                 webSocketModel.connect()
+                // surface =mirrorModel.prepareEncoder()
                 reader = mirrorModel.setupVirtualDisplay()
             }.exceptionOrNull()?.printStackTrace()
         }
@@ -85,10 +86,15 @@ class MirroringUsecase(private val context: Context): MirrorModel.MirrorCallback
     }
 
     @Deprecated("not used")
-    override fun handleByteArray(array: ByteArray) {
+    override fun handleByteArray(array: Buffer) {
         if (webSocketModel.isOpen) {
             MLog.info(TAG, "handleByteArray")
-            webSocketModel.send(array)
+            if(imageLivaData.value == null) imageLivaData.value =  Bitmap.createBitmap(context.resources.displayMetrics.widthPixels, context.resources.displayMetrics.heightPixels, MirrorModel.CONFIG)
+            array.rewind()
+            imageLivaData.value?.copyPixelsFromBuffer(array)
+            webSocketModel.send(array.toString())
+            MLog.info(TAG, "${System.currentTimeMillis() - startTime}")
+            startTime = System.currentTimeMillis()
         }
     }
 
