@@ -79,9 +79,19 @@ const productionRenderer = {
     plugins: plugins,
 };
 
+const tsServer = {
+    mode: 'development',
+    entry: { grpc: './src/grpc' },
+    target: 'node',
+    output: { path: path.resolve(__dirname, 'dist'), filename: '[name].js?[hash]' },
+    resolve: { extensions: ['.tsx', '.ts', '.js', '.json'] },
+    module: { rules: [babelRule] },
+    externals: [require('webpack-node-externals')()],
+};
+
 if ((process.env.NODE_ENV || '').trim() != 'production') {
     console.log('NODE_ENV', 'development');
-    module.exports = [developmentMain, developmentRenderer];
+    module.exports = [developmentMain, developmentRenderer, tsServer];
 } else {
     console.log('NODE_ENV', 'production');
     module.exports = [productionMain, productionRenderer];

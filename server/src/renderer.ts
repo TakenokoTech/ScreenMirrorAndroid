@@ -2,6 +2,7 @@ import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import WebSocketClient from './view/WebsocketClient';
+import GrpcClient from './view/GrpcClient';
 
 /*==================================================================================*/
 const image = document.getElementById('image');
@@ -35,6 +36,7 @@ function chnageSubmitButton(close) {
             $('#qrcode').empty();
             submitButton.disabled = true;
             WebSocketClient.close();
+            GrpcClient.close();
             $('.qr-group').css('display', 'none');
             $('#image').css('display', 'none');
             chnageSubmitButton(false);
@@ -48,6 +50,7 @@ function chnageSubmitButton(close) {
             $('#qrcode').empty();
             submitButton.disabled = true;
             WebSocketClient.open(`ws://${websocketInput.value}:8080`);
+            GrpcClient.open();
             localStorage.setItem('websocketInput', websocketInput.value);
             $('.qr-group').css('display', 'block');
             $('#image').css('display', 'block');

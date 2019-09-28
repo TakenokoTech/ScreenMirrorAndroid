@@ -6,9 +6,11 @@ import android.media.ImageReader
 import android.media.MediaFormat
 import android.view.Surface
 import androidx.lifecycle.MutableLiveData
+import tech.takenoko.screenmirror.model.GrpcModel
 import tech.takenoko.screenmirror.model.MediaProjectionModel
 import tech.takenoko.screenmirror.model.MirrorModel
 import tech.takenoko.screenmirror.model.WebSocketModel
+import tech.takenoko.screenmirror.model.io.NetworkProtocol
 import tech.takenoko.screenmirror.service.MirroringService
 import tech.takenoko.screenmirror.utils.MLog
 import java.io.ByteArrayOutputStream
@@ -17,7 +19,8 @@ import java.nio.Buffer
 
 class MirroringUsecase(private val context: Context): MirrorModel.MirrorCallback, WebSocketModel.WebSocketCallback {
     var mirrorModel: MirrorModel = MirrorModel(context.resources.displayMetrics, this)
-    var webSocketModel: WebSocketModel = WebSocketModel(this)
+    // var webSocketModel: WebSocketModel = WebSocketModel(this)
+    var networkModel: NetworkProtocol = GrpcModel()
 
     private var reader: ImageReader? = null
     private var sending: Boolean = false
@@ -32,7 +35,7 @@ class MirroringUsecase(private val context: Context): MirrorModel.MirrorCallback
         MediaProjectionModel.run(context) {
             runCatching {
                 mirrorModel.setMediaProjection(it)
-                webSocketModel.connect()
+                networkModel.connect()
                 // surface =mirrorModel.prepareEncoder()
                 reader = mirrorModel.setupVirtualDisplay()
             }.exceptionOrNull()?.printStackTrace()
@@ -49,7 +52,7 @@ class MirroringUsecase(private val context: Context): MirrorModel.MirrorCallback
     fun stop() {
         MLog.info(TAG, "stop")
         mirrorModel.disconnect()
-        webSocketModel.close()
+        networkModel.close()
     }
 
     override fun changeState() {
@@ -60,13 +63,13 @@ class MirroringUsecase(private val context: Context): MirrorModel.MirrorCallback
     var startTime = System.currentTimeMillis()
     override fun changeBitmap(image: Bitmap?) {
         MLog.debug(TAG, "changeBitmap")
-        if(!webSocketModel.isOpen) MirroringService.stop(context)
+        if(!networkModel.isOpen()) MirroringService.stop(context)
 
         sending = if(!sending) true else return
         ByteArrayOutputStream().use { stream ->
             image?.compress(Bitmap.CompressFormat.JPEG, QUALITY, stream).also {
                 sending = false
-                webSocketModel.send(stream.toByteArray())
+                networkModel.send(stream.toByteArray())
                 MLog.info(TAG, "${System.currentTimeMillis() - startTime}")
                 startTime = System.currentTimeMillis()
             }
@@ -87,12 +90,12 @@ class MirroringUsecase(private val context: Context): MirrorModel.MirrorCallback
 
     @Deprecated("not used")
     override fun handleByteArray(array: Buffer) {
-        if (webSocketModel.isOpen) {
+        if (networkModel.isOpen()) {
             MLog.info(TAG, "handleByteArray")
             if(imageLivaData.value == null) imageLivaData.value =  Bitmap.createBitmap(context.resources.displayMetrics.widthPixels, context.resources.displayMetrics.heightPixels, MirrorModel.CONFIG)
             array.rewind()
             imageLivaData.value?.copyPixelsFromBuffer(array)
-            webSocketModel.send(array.toString())
+            networkModel.send(array.toString())
             MLog.info(TAG, "${System.currentTimeMillis() - startTime}")
             startTime = System.currentTimeMillis()
         }
