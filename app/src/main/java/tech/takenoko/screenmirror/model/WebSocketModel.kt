@@ -2,11 +2,12 @@ package tech.takenoko.screenmirror.model
 
 import org.java_websocket.client.WebSocketClient
 import org.java_websocket.handshake.ServerHandshake
+import tech.takenoko.screenmirror.model.io.NetworkProtocol
 import tech.takenoko.screenmirror.utils.MLog
 import java.net.URI
 import java.nio.ByteBuffer
 
-class WebSocketModel (private val callback: WebSocketCallback) : WebSocketClient(uri) {
+class WebSocketModel (private val callback: WebSocketCallback) : NetworkProtocol, WebSocketClient(uri) {
 
     override fun onOpen(handshakedata: ServerHandshake?) {
         MLog.info(TAG, "onOpen ${handshakedata?.httpStatus}")
@@ -25,9 +26,9 @@ class WebSocketModel (private val callback: WebSocketCallback) : WebSocketClient
         MLog.info(TAG, "onError $ex")
     }
 
-    override fun send(data: ByteArray?) {
+    override fun send(bytes: ByteArray?) {
         MLog.debug(TAG, "send")
-        if (isOpen) super.send(data)
+        if (isOpen) super.send(bytes)
     }
 
     override fun send(data: ByteBuffer?) {
