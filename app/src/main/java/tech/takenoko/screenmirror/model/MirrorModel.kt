@@ -66,7 +66,7 @@ class MirrorModel(private val metrics: DisplayMetrics, val callback: MirrorCallb
         reader.acquireLatestImage().use { img ->
             runCatching {
                 heepPlane = img?.planes?.get(0) ?: return@use null
-                val width = (metrics.widthPixels * scale).toInt()
+                val width = heepPlane.rowStride / heepPlane.pixelStride
                 val height = (metrics.heightPixels * scale).toInt()
                 heepBitmap = Bitmap.createBitmap(width, height, CONFIG).apply { copyPixelsFromBuffer(heepPlane.buffer) }
                 callback.changeBitmap(heepBitmap)
