@@ -11,5 +11,8 @@ class FragmentPage1ViewModel : ViewModel() {
 
     var dateText = MutableLiveData<String>()
         private set
+
+    var sizeText = MutableLiveData<String>()
+        private set
 }
 

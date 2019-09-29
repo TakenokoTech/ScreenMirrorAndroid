@@ -20,6 +20,7 @@ class MirrorModel(private val metrics: DisplayMetrics, val callback: MirrorCallb
     private var virtualDisplay: VirtualDisplay? = null
     private lateinit var codec: MediaCodec
 
+    private var scale: Double = 1.0
     private lateinit var heepPlane: Image.Plane
     private lateinit var heepBitmap: Bitmap
 
@@ -39,11 +40,11 @@ class MirrorModel(private val metrics: DisplayMetrics, val callback: MirrorCallb
     }
 
     @SuppressLint("WrongConstant")
-    fun setupVirtualDisplay(): ImageReader? {
+    fun setupVirtualDisplay(scale: Double = 1.0): ImageReader? {
         MLog.info(TAG, "setupVirtualDisplay")
-        val scale = 1
-        val width = metrics.widthPixels * scale
-        val height = metrics.heightPixels * scale
+        this.scale = scale
+        val width = (metrics.widthPixels * scale).toInt()
+        val height = (metrics.heightPixels * scale).toInt()
         val dpi = metrics.densityDpi
         val reader = ImageReader.newInstance(width, height, FORMAT, 2).also { it.setOnImageAvailableListener(this, null) }
         virtualDisplay = mediaProjection?.createVirtualDisplay(
@@ -65,7 +66,9 @@ class MirrorModel(private val metrics: DisplayMetrics, val callback: MirrorCallb
         reader.acquireLatestImage().use { img ->
             runCatching {
                 heepPlane = img?.planes?.get(0) ?: return@use null
-                heepBitmap = Bitmap.createBitmap(heepPlane.rowStride / heepPlane.pixelStride, metrics.heightPixels, CONFIG).apply { copyPixelsFromBuffer(heepPlane.buffer) }
+                val width = (metrics.widthPixels * scale).toInt()
+                val height = (metrics.heightPixels * scale).toInt()
+                heepBitmap = Bitmap.createBitmap(width, height, CONFIG).apply { copyPixelsFromBuffer(heepPlane.buffer) }
                 callback.changeBitmap(heepBitmap)
             }
         }

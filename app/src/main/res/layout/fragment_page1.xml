@@ -162,7 +162,7 @@
                 android:contentDescription="@string/todo"
                 android:elevation="1dp"
                 android:padding="16dp"
-                app:layout_constraintBottom_toTopOf="@+id/constraintLayout"
+                app:layout_constraintBottom_toTopOf="@+id/scaleConstraintLayout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -177,12 +177,72 @@
                 android:elevation="1dp"
                 android:padding="16dp"
                 android:text=""
-                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/sizeText"
                 app:layout_constraintStart_toStartOf="parent"
                 tools:text="2999/12/31 00:00:00.000" />
 
+        <TextView
+                android:id="@+id/sizeText"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginBottom="8dp"
+                android:background="#FFF"
+                android:elevation="1dp"
+                android:padding="16dp"
+                android:text=""
+                android:textAlignment="center"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="@+id/dateText"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:text="1920x1080" />
+
         <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/constraintLayout"
+                android:id="@+id/scaleConstraintLayout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:background="#FFF"
+                android:elevation="1dp"
+                android:padding="8dp"
+                app:layout_constraintBottom_toTopOf="@+id/qualityConstraintLayout"
+                app:layout_constraintEnd_toEndOf="@+id/qualityConstraintLayout"
+                app:layout_constraintStart_toStartOf="@+id/qualityConstraintLayout">
+
+            <TextView
+                    android:id="@+id/scaleLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="4dp"
+                    android:text="Scale: "
+                    android:textAlignment="textEnd"
+                    app:layout_constraintBottom_toTopOf="@+id/scaleSeekBar"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatSeekBar
+                    android:id="@+id/scaleSeekBar"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:max="100"
+                    android:progress="50"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                    android:id="@+id/scaleText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="50%"
+                    android:textAlignment="textEnd"
+                    app:layout_constraintBottom_toBottomOf="@+id/scaleLabel"
+                    app:layout_constraintStart_toEndOf="@+id/scaleLabel" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/qualityConstraintLayout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -221,7 +281,7 @@
                     android:id="@+id/qualityText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="80"
+                    android:text="80%"
                     android:textAlignment="textEnd"
                     app:layout_constraintBottom_toBottomOf="@+id/qualityLabel"
                     app:layout_constraintStart_toEndOf="@+id/qualityLabel" />

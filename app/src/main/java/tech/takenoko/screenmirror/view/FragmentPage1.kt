@@ -2,6 +2,7 @@ package tech.takenoko.screenmirror.view
 
 import android.Manifest.permission.*
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.projection.MediaProjectionManager
 import android.os.Bundle
@@ -14,9 +15,11 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.fragment_page1.view.*
+import kotlinx.coroutines.ObsoleteCoroutinesApi
 import tech.takenoko.screenmirror.R
 import tech.takenoko.screenmirror.model.MirrorModel
 import tech.takenoko.screenmirror.service.MirroringService
+import tech.takenoko.screenmirror.service.MirroringService.Companion.RESTART_BTN_INTENT
 import tech.takenoko.screenmirror.usecase.MirroringUsecase
 import tech.takenoko.screenmirror.usecase.PairingUsecase
 import tech.takenoko.screenmirror.utils.MLog
@@ -24,6 +27,7 @@ import tech.takenoko.screenmirror.utils.getNowDate
 import tech.takenoko.screenmirror.viewmodel.FragmentPage1ViewModel
 import java.util.*
 
+@ObsoleteCoroutinesApi
 class FragmentPage1 : BaseFragment<FragmentPage1ViewModel>() {
     private val mediaProjectionManager: MediaProjectionManager?
         get() = context?.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager?
@@ -55,6 +59,7 @@ class FragmentPage1 : BaseFragment<FragmentPage1ViewModel>() {
         MLog.info(TAG, "onAttachLiveData")
         // vm.buttonText.observe { view?.button?.text = it }
         vm.dateText.observe { view?.dateText?.text = it }
+        vm.sizeText.observe { view?.sizeText?.text = it }
         MirroringUsecase.stateLivaData.observe(this, Observer{
             when (it) {
                 MirrorModel.StatesType.Waiting -> {
@@ -77,6 +82,9 @@ class FragmentPage1 : BaseFragment<FragmentPage1ViewModel>() {
         MirroringUsecase.imageLivaData.observe(this, Observer {
             view?.image?.setImageBitmap(it)
             vm.dateText.set(Date(System.currentTimeMillis()).getNowDate())
+            val width = (context?.resources?.displayMetrics?.widthPixels ?: 0) * MirroringUsecase.SCALE / 100
+            val height = (context?.resources?.displayMetrics?.heightPixels ?: 0) * MirroringUsecase.SCALE / 100
+            vm.sizeText.set("$width x $height")
         })
     }
 
@@ -94,10 +102,27 @@ class FragmentPage1 : BaseFragment<FragmentPage1ViewModel>() {
                 }
             }
         }
+        view?.scaleSeekBar?.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                ((progress / 10) * 10).also {
+                    if(it== MirroringUsecase.SCALE) return
+                    MirroringUsecase.SCALE = it
+                    view?.scaleText?.text = "${it}%"
+                    view?.scaleSeekBar?.progress = it
+                    context?.sendBroadcast(Intent(RESTART_BTN_INTENT))
+                }
+            }
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+        })
         view?.qualitySeekBar?.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                MirroringUsecase.QUALITY = progress
-                view?.qualityText?.text = "${progress}"
+                ((progress / 10) * 10).also {
+                    if(it == MirroringUsecase.QUALITY) return
+                    MirroringUsecase.QUALITY = it
+                    view?.qualityText?.text = "${it}%"
+                    context?.sendBroadcast(Intent(RESTART_BTN_INTENT))
+                }
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}

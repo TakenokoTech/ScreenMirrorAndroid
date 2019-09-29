@@ -6,6 +6,7 @@ import android.media.ImageReader
 import android.media.MediaFormat
 import android.view.Surface
 import androidx.lifecycle.MutableLiveData
+import kotlinx.coroutines.*
 import tech.takenoko.screenmirror.model.MediaProjectionModel
 import tech.takenoko.screenmirror.model.MirrorModel
 import tech.takenoko.screenmirror.model.WebSocketModel
@@ -15,6 +16,7 @@ import java.io.ByteArrayOutputStream
 import java.nio.Buffer
 
 
+@ObsoleteCoroutinesApi
 class MirroringUsecase(private val context: Context): MirrorModel.MirrorCallback, WebSocketModel.WebSocketCallback {
     var mirrorModel: MirrorModel = MirrorModel(context.resources.displayMetrics, this)
     var webSocketModel: WebSocketModel = WebSocketModel(this)
@@ -34,7 +36,7 @@ class MirroringUsecase(private val context: Context): MirrorModel.MirrorCallback
                 mirrorModel.setMediaProjection(it)
                 webSocketModel.connect()
                 // surface =mirrorModel.prepareEncoder()
-                reader = mirrorModel.setupVirtualDisplay()
+                reader = mirrorModel.setupVirtualDisplay(SCALE/100.0)
             }.exceptionOrNull()?.printStackTrace()
         }
     }
@@ -42,7 +44,7 @@ class MirroringUsecase(private val context: Context): MirrorModel.MirrorCallback
     fun restart() {
         MLog.info(TAG, "restart")
         runCatching {
-            reader = mirrorModel.setupVirtualDisplay()
+            reader = mirrorModel.setupVirtualDisplay(SCALE/100.0)
         }.exceptionOrNull()?.printStackTrace()
     }
 
@@ -61,27 +63,17 @@ class MirroringUsecase(private val context: Context): MirrorModel.MirrorCallback
     override fun changeBitmap(image: Bitmap?) {
         MLog.debug(TAG, "changeBitmap")
         if(!webSocketModel.isOpen) MirroringService.stop(context)
-
         sending = if(!sending) true else return
-        ByteArrayOutputStream().use { stream ->
-            image?.compress(Bitmap.CompressFormat.JPEG, QUALITY, stream).also {
-                sending = false
-                webSocketModel.send(stream.toByteArray())
+        GlobalScope.launch(imageTread) {
+            ByteArrayOutputStream().use { stream ->
+                image?.compress(Bitmap.CompressFormat.JPEG, QUALITY, stream).also {
+                    sending = false
+                    webSocketModel.send(stream.toByteArray())
+                }
                 MLog.info(TAG, "${System.currentTimeMillis() - startTime}")
                 startTime = System.currentTimeMillis()
             }
         }
-
-        /*
-        if(image != null) {
-            val alloc = ByteBuffer.allocate(image.byteCount)
-            image.copyPixelsToBuffer(alloc)
-            webSocketModel.send(alloc.array())
-            MLog.info(TAG, "${System.currentTimeMillis() - startTime}")
-            startTime = System.currentTimeMillis()
-        }
-        */
-
         imageLivaData.value = image
     }
 
@@ -100,6 +92,7 @@ class MirroringUsecase(private val context: Context): MirrorModel.MirrorCallback
 
     companion object {
         val TAG: String = MirroringUsecase::class.java.simpleName
+        var SCALE = 50
         var QUALITY = 80
         val CODEC = listOf(
             MediaFormat.MIMETYPE_VIDEO_AVC,
@@ -109,5 +102,6 @@ class MirroringUsecase(private val context: Context): MirrorModel.MirrorCallback
         )
         val stateLivaData: MutableLiveData<MirrorModel.StatesType> = MutableLiveData()
         val imageLivaData: MutableLiveData<Bitmap> = MutableLiveData()
+        val imageTread = Dispatchers.Main // newSingleThreadContext("ImageThread")
     }
 }
