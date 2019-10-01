@@ -65,6 +65,7 @@ jobs:
             -H "Authorization: token ${GITHUB_TOKEN}" \
             https://api.github.com/repos/TakenokoTech/ScreenMirrorAndroid/releases/latest \
             | jq ".id"`
+          echo "https://uploads.github.com/repos/TakenokoTech/ScreenMirrorAndroid/releases/$RELEASE_ID/assets?name=app-release.apk"
           curl -X POST \
             -H "Authorization: token ${GITHUB_TOKEN}" \
             -H "Content-Type: application/zip" \
