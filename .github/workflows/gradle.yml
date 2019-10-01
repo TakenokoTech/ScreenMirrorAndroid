@@ -59,14 +59,17 @@ jobs:
         env:
           JOB_CONTAINER_ID: ${{ job.container.id }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          OWNER: TakenokoTech
+          REPO: ScreenMirrorAndroid
+          APK: app-release.apk
         run: |
           cd app/build/outputs/apk/release
           RELEASE_ID=`curl -s \
             -H "Authorization: token ${GITHUB_TOKEN}" \
-            https://api.github.com/repos/TakenokoTech/ScreenMirrorAndroid/releases/latest \
+            https://api.github.com/repos/${OWNER}/${REPO}/releases/latest \
             | jq ".id"`
           curl -X POST \
             -H "Authorization: token ${GITHUB_TOKEN}" \
             -H "Content-Type: application/zip" \
-            -d @app-release.apk \
-            https://uploads.github.com/repos/TakenokoTech/ScreenMirrorAndroid/releases/$RELEASE_ID/assets?name=app-release.apk
+            -d @${APK} \
+            https://uploads.github.com/repos/${OWNER}/${REPO}/releases/${RELEASE_ID}/assets?name=${APK}

@@ -1,0 +1,5 @@
+{
+    "macOS-latest": "ScreenMirrorApp-darwin-x64",
+    "ubuntu-latest": "ScreenMirrorApp-linux-x64",
+    "windows-latest": "ScreenMirrorApp-win32-x64"
+}

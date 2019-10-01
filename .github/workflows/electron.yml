@@ -54,3 +54,22 @@ jobs:
       run: |
         cd server
         npm run upload
+    - name: Latest Publish
+      env:
+        JOB_CONTAINER_ID: ${{ job.container.id }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        OWNER: TakenokoTech
+        REPO: ScreenMirrorAndroid
+        TARGET_OS: ${{ matrix.os }}
+      run: |
+        cd server/build
+        FILE=`cat ../ci/target.json | jq '."#{TARGET_OS}"'`
+        RELEASE_ID=`curl -s \
+          -H "Authorization: token ${GITHUB_TOKEN}" \
+          https://api.github.com/repos/${OWNER}/${REPO}/releases/latest \
+          | jq ".id"`
+        curl -X POST \
+          -H "Authorization: token ${GITHUB_TOKEN}" \
+          -H "Content-Type: application/zip" \
+          -d @${FILE} \
+          https://uploads.github.com/repos/${OWNER}/${REPO}/releases/$RELEASE_ID/assets?name=${FILE}
