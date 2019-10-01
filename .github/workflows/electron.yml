@@ -64,14 +64,4 @@ jobs:
         TARGET_OS: ${{ matrix.os }}
       run: |
         cd server/build
-        FILE=`node ../ci/target.js`
-        echo $FILE
-        RELEASE_ID=`curl -s \
-          -H "Authorization: token ${GITHUB_TOKEN}" \
-          https://api.github.com/repos/${OWNER}/${REPO}/releases/latest \
-          | jq ".id"`
-        curl -X POST \
-          -H "Authorization: token ${GITHUB_TOKEN}" \
-          -H "Content-Type: application/zip" \
-          -d @${FILE} \
-          https://uploads.github.com/repos/${OWNER}/${REPO}/releases/$RELEASE_ID/assets?name=${FILE}
+        node ../ci/release.js
