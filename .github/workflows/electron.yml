@@ -55,6 +55,7 @@ jobs:
         cd server
         npm run upload
     - name: Latest Publish
+      if: matrix.node == '12.x'
       env:
         JOB_CONTAINER_ID: ${{ job.container.id }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -63,7 +64,8 @@ jobs:
         TARGET_OS: ${{ matrix.os }}
       run: |
         cd server/build
-        FILE=`cat ../ci/target.json | jq '."#{TARGET_OS}"'`
+        FILE=`node ../ci/target.js`
+        echo $FILE
         RELEASE_ID=`curl -s \
           -H "Authorization: token ${GITHUB_TOKEN}" \
           https://api.github.com/repos/${OWNER}/${REPO}/releases/latest \
