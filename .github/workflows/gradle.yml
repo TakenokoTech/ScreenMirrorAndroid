@@ -1,6 +1,6 @@
 name: Android CI
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   Build:
@@ -68,5 +68,5 @@ jobs:
           curl -X POST \
             -H "Authorization: token ${GITHUB_TOKEN}" \
             -H "Content-Type: application/zip" \
-            -d @app-release.apk
+            -d @app-release.apk \
             https://uploads.github.com/repos/TakenokoTech/ScreenMirrorAndroid/releases/$RELEASE_ID/assets?name=app-release.apk
