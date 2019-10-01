@@ -48,7 +48,7 @@ async function releaseAssets(RELEASE_ID) {
                     Authorization: `token ${GITHUB_TOKEN}`,
                     'Content-Type': 'application/zip',
                 },
-                body: '@$FILE',
+                body: '@${FILE}.zip',
             },
             (error, response, body) => {
                 const result = JSON.parse(body);
