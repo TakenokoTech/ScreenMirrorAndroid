@@ -64,16 +64,20 @@ jobs:
           APK: app-release.apk
         run: |
           cd app/build/outputs/apk/release
+          curl -s \
+            -H "Authorization: token ${GITHUB_TOKEN}" \
+            https://api.github.com/repos/${OWNER}/${REPO}/releases/latest
+          echo "========================================="
           RELEASE_ID=`curl -s \
             -H "Authorization: token ${GITHUB_TOKEN}" \
             https://api.github.com/repos/${OWNER}/${REPO}/releases/latest \
             | jq ".id"`
-          echo $RELEASE_ID
+          echo "RELEASE_ID=$RELEASE_ID"
           ASSET_ID=`curl -s \
             -H "Authorization: token ${GITHUB_TOKEN}" \
             https://api.github.com/repos/${OWNER}/${REPO}/releases/latest \
             | jq '.assets[] | select(.name == "${APK}") | .id'`
-          echo $ASSET_ID
+          echo "ASSET_ID=$ASSET_ID"
           curl -X DELETE \
             -H "Authorization: token ${GITHUB_TOKEN}" \
             https://api.github.com/repos/${OWNER}/${REPO}/releases/assets/${ASSET_ID}
