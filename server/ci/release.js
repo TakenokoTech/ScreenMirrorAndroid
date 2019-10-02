@@ -1,4 +1,5 @@
 const request = require('request');
+const fs = require('fs');
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const OWNER = process.env.OWNER;
@@ -40,15 +41,16 @@ async function latestReleases() {
 
 async function releaseAssets(RELEASE_ID) {
     return new Promise(resolve => {
+        const file = fs.readFileSync(`${FILE}.zip`);
         request(
             {
-                url: `https://uploads.github.com/repos/${OWNER}/${REPO}/releases/${RELEASE_ID}/assets?name=${FILE}`,
+                url: `https://uploads.github.com/repos/${OWNER}/${REPO}/releases/${RELEASE_ID}/assets?name=${FILE}.zip`,
                 method: 'POST',
                 headers: {
                     Authorization: `token ${GITHUB_TOKEN}`,
                     'Content-Type': 'application/zip',
                 },
-                body: '@${FILE}.zip',
+                body: file,
             },
             (error, response, body) => {
                 const result = JSON.parse(body);
@@ -89,7 +91,7 @@ async function deleteReleaseAssets(ASSET_ID) {
         const result = await latestReleases();
         console.log('RELEASE_ID', result.id);
         for (const asset of result.assets) {
-            if (asset.name == FILE) await deleteReleaseAssets(asset.id);
+            if (asset.name == `${FILE}` || asset.name == `${FILE}.zip`) await deleteReleaseAssets(asset.id);
         }
         await releaseAssets(result.id);
     } catch (e) {
