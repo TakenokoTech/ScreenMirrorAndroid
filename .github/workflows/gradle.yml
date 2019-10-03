@@ -86,6 +86,6 @@ jobs:
           ls -la
           curl -X POST \
             -H "Authorization: token ${GITHUB_TOKEN}" \
-            -H "Content-Type: application/zip" \
+            -H "Content-Type: application/vnd.android.package-archive" \
             -d @app-release.apk \
             https://uploads.github.com/repos/${OWNER}/${REPO}/releases/${RELEASE_ID}/assets?name=${APK}
