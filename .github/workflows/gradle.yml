@@ -56,36 +56,11 @@ jobs:
           RELEASE_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
           RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
       - name: Latest Publish
-        env:
-          JOB_CONTAINER_ID: ${{ job.container.id }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          OWNER: TakenokoTech
-          REPO: ScreenMirrorAndroid
-          APK: app-release.apk
-        run: |
-          cd app/build/outputs/apk/release
-          echo "========================================="
-          curl -s \
-            -H "Authorization: token ${GITHUB_TOKEN}" \
-            https://api.github.com/repos/${OWNER}/${REPO}/releases/latest \
-            | jq '.assets[] | .name'
-          echo "========================================="
-          RELEASE_ID=`curl -s \
-            -H "Authorization: token ${GITHUB_TOKEN}" \
-            https://api.github.com/repos/${OWNER}/${REPO}/releases/latest \
-            | jq ".id"`
-          echo "RELEASE_ID=$RELEASE_ID"
-          ASSET_ID=`curl -s \
-            -H "Authorization: token ${GITHUB_TOKEN}" \
-            https://api.github.com/repos/${OWNER}/${REPO}/releases/latest \
-            | jq '.assets[] | select(.name == "app-release.apk") | .id'`
-          echo "ASSET_ID=$ASSET_ID"
-          curl -X DELETE \
-            -H "Authorization: token ${GITHUB_TOKEN}" \
-            https://api.github.com/repos/${OWNER}/${REPO}/releases/assets/${ASSET_ID}
-          ls -la
-          curl -X POST \
-            -H "Authorization: token ${GITHUB_TOKEN}" \
-            -H "Content-Type: application/vnd.android.package-archive" \
-            -d @app-release.apk \
-            https://uploads.github.com/repos/${OWNER}/${REPO}/releases/${RELEASE_ID}/assets?name=${APK}
+        uses: nokotech/actions/release@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          owner: TakenokoTech
+          repo: ScreenMirrorAndroid
+          dir: app/build/outputs/apk/release
+          file: app-release.apk
+          content-type: application/vnd.android.package-archive
