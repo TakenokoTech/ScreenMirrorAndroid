@@ -5,4 +5,5 @@
 
     <string name="notificationTitle">ScreenMirror</string>
     <string name="notificationSubTitle">ミラーリング中だよ</string>
+    <string name="startCastText">キャストを開始してください</string>
 </resources>

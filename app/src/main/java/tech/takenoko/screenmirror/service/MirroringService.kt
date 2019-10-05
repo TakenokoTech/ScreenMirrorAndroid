@@ -73,7 +73,6 @@ class MirroringService : Service() {
         mirroringUsecase = MirroringUsecase(this)
         mirroringUsecase.start()
         registerReceiver(configChangeBroadcastReciver, IntentFilter("android.intent.action.CONFIGURATION_CHANGED"))
-        registerReceiver(configChangeBroadcastReciver, IntentFilter(RESTART_BTN_INTENT))
     }
 
     override fun onDestroy() {
@@ -107,7 +106,6 @@ class MirroringService : Service() {
         const val NOTIFY_TEXT = "ミラーリング中だよ"
         const val CLOSE_BTN_INTENT = "tech.takenoko.screenmirror.service.MirroringService.CLOSE_BTN_INTENT"
         const val OPEN_BTN_INTENT = "tech.takenoko.screenmirror.service.MirroringService.OPEN_BTN_INTENT"
-        const val RESTART_BTN_INTENT = "tech.takenoko.screenmirror.service.MirroringService.RESTART_BTN_INTENT"
 
         val start: (Context) -> Unit = {
             val intent = Intent(it, MirroringService::class.java)
