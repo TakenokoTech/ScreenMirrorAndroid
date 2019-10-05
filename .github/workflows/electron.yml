@@ -54,3 +54,14 @@ jobs:
       run: |
         cd server
         npm run upload
+    - name: Latest Publish
+      if: matrix.node == '12.x'
+      env:
+        JOB_CONTAINER_ID: ${{ job.container.id }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        OWNER: TakenokoTech
+        REPO: ScreenMirrorAndroid
+        TARGET_OS: ${{ matrix.os }}
+      run: |
+        cd server/build
+        node ../ci/release.js

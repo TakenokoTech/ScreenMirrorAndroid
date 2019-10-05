@@ -2,7 +2,6 @@ package tech.takenoko.screenmirror.view
 
 import android.Manifest.permission.*
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.projection.MediaProjectionManager
 import android.os.Bundle
@@ -19,7 +18,6 @@ import kotlinx.coroutines.ObsoleteCoroutinesApi
 import tech.takenoko.screenmirror.R
 import tech.takenoko.screenmirror.model.MirrorModel
 import tech.takenoko.screenmirror.service.MirroringService
-import tech.takenoko.screenmirror.service.MirroringService.Companion.RESTART_BTN_INTENT
 import tech.takenoko.screenmirror.usecase.MirroringUsecase
 import tech.takenoko.screenmirror.usecase.PairingUsecase
 import tech.takenoko.screenmirror.utils.MLog
@@ -65,17 +63,26 @@ class FragmentPage1 : BaseFragment<FragmentPage1ViewModel>() {
                 MirrorModel.StatesType.Waiting -> {
                     vm.buttonText.set("Cancel")
                     view?.castButton?.background = resources.getDrawable(R.drawable.shape_cast_button,null)
-                    view?.castLayout?.visibility = View.INVISIBLE
+                    view?.image?.visibility = View.INVISIBLE
+                    view?.startCastText?.visibility = View.VISIBLE
+                    view?.scaleConstraintLayout?.visibility = View.VISIBLE
+                    view?.qualityConstraintLayout?.visibility = View.VISIBLE
                 }
                 MirrorModel.StatesType.Running -> {
                     vm.buttonText.set("Stop")
                     view?.castButton?.background = resources.getDrawable(R.drawable.shape_close_button,null)
-                    view?.castLayout?.visibility = View.VISIBLE
+                    view?.image?.visibility = View.VISIBLE
+                    view?.startCastText?.visibility = View.INVISIBLE
+                    view?.scaleConstraintLayout?.visibility = View.INVISIBLE
+                    view?.qualityConstraintLayout?.visibility = View.INVISIBLE
                 }
                 else -> {
                     vm.buttonText.set("Start")
                     view?.castButton?.background = resources.getDrawable(R.drawable.shape_cast_button,null)
-                    view?.castLayout?.visibility = View.INVISIBLE
+                    view?.image?.visibility = View.INVISIBLE
+                    view?.startCastText?.visibility = View.VISIBLE
+                    view?.scaleConstraintLayout?.visibility = View.VISIBLE
+                    view?.qualityConstraintLayout?.visibility = View.VISIBLE
                 }
             }
         })
@@ -109,7 +116,6 @@ class FragmentPage1 : BaseFragment<FragmentPage1ViewModel>() {
                     MirroringUsecase.SCALE = it
                     view?.scaleText?.text = "${it}%"
                     view?.scaleSeekBar?.progress = it
-                    context?.sendBroadcast(Intent(RESTART_BTN_INTENT))
                 }
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
@@ -121,7 +127,7 @@ class FragmentPage1 : BaseFragment<FragmentPage1ViewModel>() {
                     if(it == MirroringUsecase.QUALITY) return
                     MirroringUsecase.QUALITY = it
                     view?.qualityText?.text = "${it}%"
-                    context?.sendBroadcast(Intent(RESTART_BTN_INTENT))
+                    view?.qualitySeekBar?.progress = it
                 }
             }
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
