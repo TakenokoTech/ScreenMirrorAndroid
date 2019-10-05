@@ -26,7 +26,7 @@ class QRReaderModel : Activity() {
         val result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data)
         if (result != null) {
             MLog.info(TAG, result.contents)
-            uri(URI(result.contents))
+            uri(result.contents)
         }
         finish()
     }
@@ -34,8 +34,8 @@ class QRReaderModel : Activity() {
     companion object {
         val TAG: String = QRReaderModel::class.java.simpleName
 
-        private var uri: (URI) -> Unit = {}
-        val run: (context: Context, (URI) -> Unit) -> Unit = { context, callback ->
+        private var uri: (String) -> Unit = {}
+        val run: (context: Context, (String) -> Unit) -> Unit = { context, callback ->
             uri = callback
             context.startActivity(Intent(context, QRReaderModel::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
         }

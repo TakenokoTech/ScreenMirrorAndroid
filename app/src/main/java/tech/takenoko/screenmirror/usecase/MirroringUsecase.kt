@@ -12,14 +12,17 @@ import tech.takenoko.screenmirror.model.MirrorModel
 import tech.takenoko.screenmirror.model.WebSocketModel
 import tech.takenoko.screenmirror.service.MirroringService
 import tech.takenoko.screenmirror.utils.MLog
+import tech.takenoko.screenmirror.utils.MPreferences
 import java.io.ByteArrayOutputStream
+import java.net.URI
 import java.nio.Buffer
 
 
 @ObsoleteCoroutinesApi
 class MirroringUsecase(private val context: Context): MirrorModel.MirrorCallback, WebSocketModel.WebSocketCallback {
+    val preferences = MPreferences(context)
     var mirrorModel: MirrorModel = MirrorModel(context.resources.displayMetrics, this)
-    var webSocketModel: WebSocketModel = WebSocketModel(this)
+    var webSocketModel: WebSocketModel = WebSocketModel(URI(URI_FORMAT.format(preferences.uri.syncGet())),this)
 
     private var reader: ImageReader? = null
     private var sending: Boolean = false
@@ -92,6 +95,7 @@ class MirroringUsecase(private val context: Context): MirrorModel.MirrorCallback
 
     companion object {
         val TAG: String = MirroringUsecase::class.java.simpleName
+        const val URI_FORMAT = "ws://%s:8080"
         var SCALE = 50
         var QUALITY = 80
         val CODEC = listOf(

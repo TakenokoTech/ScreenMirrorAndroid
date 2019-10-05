@@ -1,10 +1,10 @@
 package tech.takenoko.screenmirror.view
 
 import android.Manifest.permission.*
-import android.content.Context
 import android.content.pm.PackageManager
-import android.media.projection.MediaProjectionManager
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,35 +13,34 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import kotlinx.android.synthetic.main.fragment_page1.view.*
+import kotlinx.android.synthetic.main.fragment_main_page.view.*
 import kotlinx.coroutines.ObsoleteCoroutinesApi
 import tech.takenoko.screenmirror.R
 import tech.takenoko.screenmirror.model.MirrorModel
 import tech.takenoko.screenmirror.service.MirroringService
 import tech.takenoko.screenmirror.usecase.MirroringUsecase
 import tech.takenoko.screenmirror.usecase.PairingUsecase
-import tech.takenoko.screenmirror.utils.MLog
-import tech.takenoko.screenmirror.utils.getNowDate
-import tech.takenoko.screenmirror.viewmodel.FragmentPage1ViewModel
+import tech.takenoko.screenmirror.utils.*
+import tech.takenoko.screenmirror.viewmodel.MainPageViewModel
 import java.util.*
 
 @ObsoleteCoroutinesApi
-class FragmentPage1 : BaseFragment<FragmentPage1ViewModel>() {
-    private val mediaProjectionManager: MediaProjectionManager?
-        get() = context?.getSystemService(Context.MEDIA_PROJECTION_SERVICE) as MediaProjectionManager?
+class FragmentMainPage : BaseFragment<MainPageViewModel>() {
 
     private lateinit var pairingUsecase: PairingUsecase
+    private lateinit var preferences: MPreferences
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         super.onCreateView(inflater, container, savedInstanceState)
-        return inflater.inflate(R.layout.fragment_page1, container, false)
+        return inflater.inflate(R.layout.fragment_main_page, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         MLog.info(TAG, "onViewCreated")
         super.onViewCreated(view, savedInstanceState)
-        vm = ViewModelProviders.of(this)[FragmentPage1ViewModel::class.java]
+        vm = ViewModelProviders.of(this)[MainPageViewModel::class.java]
         pairingUsecase = PairingUsecase(requireActivity())
+        preferences = MPreferences(requireContext())
 
         initLiveData()
         onAttachLiveData()
@@ -50,39 +49,27 @@ class FragmentPage1 : BaseFragment<FragmentPage1ViewModel>() {
     }
 
     override fun initLiveData() {
-        vm.buttonText.set("Start")
+        vm.visibleUrl.set(getDevice() != DeviceType.Phone)
+        vm.urlText.set(preferences.uri.syncGet())
     }
 
     override fun onAttachLiveData() {
         MLog.info(TAG, "onAttachLiveData")
-        // vm.buttonText.observe { view?.button?.text = it }
+        vm.urlText.observe { view?.urlEditText?.setText(it) }
         vm.dateText.observe { view?.dateText?.text = it }
         vm.sizeText.observe { view?.sizeText?.text = it }
+        vm.visibleUrl.observe { view?.urlConstraintLayout?.visibility = if(vm.visibleUrl.value == true) View.VISIBLE else View.INVISIBLE }
         MirroringUsecase.stateLivaData.observe(this, Observer{
             when (it) {
-                MirrorModel.StatesType.Waiting -> {
-                    vm.buttonText.set("Cancel")
-                    view?.castButton?.background = resources.getDrawable(R.drawable.shape_cast_button,null)
-                    view?.image?.visibility = View.INVISIBLE
-                    view?.startCastText?.visibility = View.VISIBLE
-                    view?.scaleConstraintLayout?.visibility = View.VISIBLE
-                    view?.qualityConstraintLayout?.visibility = View.VISIBLE
-                }
                 MirrorModel.StatesType.Running -> {
-                    vm.buttonText.set("Stop")
                     view?.castButton?.background = resources.getDrawable(R.drawable.shape_close_button,null)
-                    view?.image?.visibility = View.VISIBLE
-                    view?.startCastText?.visibility = View.INVISIBLE
-                    view?.scaleConstraintLayout?.visibility = View.INVISIBLE
-                    view?.qualityConstraintLayout?.visibility = View.INVISIBLE
+                    view?.standbyLayout?.visibility = View.INVISIBLE
+                    view?.castLayout?.visibility = View.VISIBLE
                 }
                 else -> {
-                    vm.buttonText.set("Start")
                     view?.castButton?.background = resources.getDrawable(R.drawable.shape_cast_button,null)
-                    view?.image?.visibility = View.INVISIBLE
-                    view?.startCastText?.visibility = View.VISIBLE
-                    view?.scaleConstraintLayout?.visibility = View.VISIBLE
-                    view?.qualityConstraintLayout?.visibility = View.VISIBLE
+                    view?.standbyLayout?.visibility = View.VISIBLE
+                    view?.castLayout?.visibility = View.INVISIBLE
                 }
             }
         })
@@ -99,16 +86,17 @@ class FragmentPage1 : BaseFragment<FragmentPage1ViewModel>() {
         MLog.info(TAG, "onAttachEvent")
         view?.castButton?.setOnClickListener {
             when (MirrorModel.states) {
-                MirrorModel.StatesType.Waiting, MirrorModel.StatesType.Running -> {
-                    MirroringService.stop(requireActivity())
-                }
-                else -> {
-                    pairingUsecase.scanUrl {
-                        MirroringService.start(requireActivity())
-                    }
-                }
+                MirrorModel.StatesType.Stop -> pairingUsecase.scanUrl { MirroringService.start(requireActivity()) }
+                else -> MirroringService.stop(requireActivity())
             }
         }
+        view?.urlEditText?.addTextChangedListener(object: TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                if(preferences.uri.syncGet() != s.toString()) preferences.uri.syncPut(s.toString())
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
         view?.scaleSeekBar?.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 ((progress / 10) * 10).also {
@@ -133,6 +121,10 @@ class FragmentPage1 : BaseFragment<FragmentPage1ViewModel>() {
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
+        view?.urlClearButton?.setOnClickListener {
+            preferences.uri.syncClear()
+            vm.urlText.set(preferences.uri.syncGet())
+        }
     }
 
     private fun checkPermission() {
@@ -144,7 +136,7 @@ class FragmentPage1 : BaseFragment<FragmentPage1ViewModel>() {
     }
 
     companion object {
-        val TAG: String = FragmentPage1::class.java.simpleName
+        val TAG: String = FragmentMainPage::class.java.simpleName
         const val REQUEST_CODE = 1
         val USED_PERMISSION = listOf(READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE, RECORD_AUDIO)
     }

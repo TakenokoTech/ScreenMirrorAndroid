@@ -45,13 +45,16 @@ class MirroringService : Service() {
             return START_NOT_STICKY
         }
 
-        (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager).also { manager ->
-            if (manager.getNotificationChannel(CHANNEL_ID) == null) manager.createNotificationChannel(
-                NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH).apply {
-                    description = CHANNEL_DESC
-                }
-            )
+        (getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager?).also { manager ->
+            kotlin.runCatching {
+                if (manager?.getNotificationChannel(CHANNEL_ID) == null) manager?.createNotificationChannel(
+                    NotificationChannel(CHANNEL_ID, CHANNEL_NAME, NotificationManager.IMPORTANCE_HIGH).apply {
+                        description = CHANNEL_DESC
+                    }
+                )
+            }
         }
+
 
         startForeground(ID, NotificationCompat.Builder(this, CHANNEL_ID).apply {
             remoteViews = this@MirroringService.createNotificationView()

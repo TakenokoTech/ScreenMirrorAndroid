@@ -4,7 +4,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.core.content.ContextCompat
-import tech.takenoko.screenmirror.view.FragmentPage1
+import tech.takenoko.screenmirror.view.BaseFragment
+import tech.takenoko.screenmirror.view.FragmentMainPage
 
 class MainActivity : AppCompatActivity() {
 
@@ -19,7 +20,14 @@ class MainActivity : AppCompatActivity() {
         }
 
         supportFragmentManager.beginTransaction().run {
-            add(R.id.fragment_frame, FragmentPage1())
+            add(R.id.fragment_frame, FragmentMainPage())
+            commit()
+        }
+    }
+
+    fun pushFragment(fragment: BaseFragment<*>) {
+        supportFragmentManager.beginTransaction().run {
+            replace(R.id.fragment_frame, fragment)
             commit()
         }
     }

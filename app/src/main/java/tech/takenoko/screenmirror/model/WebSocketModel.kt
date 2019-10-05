@@ -6,10 +6,10 @@ import tech.takenoko.screenmirror.utils.MLog
 import java.net.URI
 import java.nio.ByteBuffer
 
-class WebSocketModel (private val callback: WebSocketCallback) : WebSocketClient(uri) {
+class WebSocketModel (uri: URI, private val callback: WebSocketCallback) : WebSocketClient(uri) {
 
     override fun onOpen(handshakedata: ServerHandshake?) {
-        MLog.info(TAG, "onOpen ${handshakedata?.httpStatus}")
+        MLog.info(TAG, "onOpen ${handshakedata?.httpStatus} ${this.uri}")
     }
 
     override fun onClose(code: Int, reason: String?, remote: Boolean) {
@@ -37,7 +37,6 @@ class WebSocketModel (private val callback: WebSocketCallback) : WebSocketClient
 
     companion object {
         val TAG: String = WebSocketModel::class.java.simpleName
-        var uri = URI("ws://10.0.2.2:8080")
     }
 
     interface WebSocketCallback {
