@@ -46,6 +46,8 @@ class FragmentMainPage : BaseFragment<MainPageViewModel>() {
         onAttachLiveData()
         onAttachEvent()
         checkPermission()
+
+        MirroringService.start(requireActivity())
     }
 
     override fun initLiveData() {
@@ -76,8 +78,8 @@ class FragmentMainPage : BaseFragment<MainPageViewModel>() {
         MirroringUsecase.imageLivaData.observe(this, Observer {
             view?.image?.setImageBitmap(it)
             vm.dateText.set(Date(System.currentTimeMillis()).getNowDate())
-            val width = (context?.resources?.displayMetrics?.widthPixels ?: 0) * MirroringUsecase.SCALE / 100
-            val height = (context?.resources?.displayMetrics?.heightPixels ?: 0) * MirroringUsecase.SCALE / 100
+            val width = (context?.resources?.displayMetrics?.widthPixels ?: 0)
+            val height = (context?.resources?.displayMetrics?.heightPixels ?: 0)
             vm.sizeText.set("$width x $height")
         })
     }
@@ -85,7 +87,8 @@ class FragmentMainPage : BaseFragment<MainPageViewModel>() {
     override fun onAttachEvent() {
         MLog.info(TAG, "onAttachEvent")
         view?.castButton?.setOnClickListener {
-            when (MirrorModel.states) {
+            MLog.info(TAG, MirroringUsecase.stateLivaData.value.toString())
+            when (MirroringUsecase.stateLivaData.value) {
                 MirrorModel.StatesType.Stop -> pairingUsecase.scanUrl { MirroringService.start(requireActivity()) }
                 else -> MirroringService.stop(requireActivity())
             }
@@ -100,8 +103,8 @@ class FragmentMainPage : BaseFragment<MainPageViewModel>() {
         view?.scaleSeekBar?.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 ((progress / 10) * 10).also {
-                    if(it== MirroringUsecase.SCALE) return
-                    MirroringUsecase.SCALE = it
+                    // if(it== MirroringUsecase.SCALE) return
+                    // MirroringUsecase.SCALE = it
                     view?.scaleText?.text = "${it}%"
                     view?.scaleSeekBar?.progress = it
                 }
@@ -112,8 +115,8 @@ class FragmentMainPage : BaseFragment<MainPageViewModel>() {
         view?.qualitySeekBar?.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 ((progress / 10) * 10).also {
-                    if(it == MirroringUsecase.QUALITY) return
-                    MirroringUsecase.QUALITY = it
+//                    if(it == MirroringUsecase.QUALITY) return
+//                    MirroringUsecase.QUALITY = it
                     view?.qualityText?.text = "${it}%"
                     view?.qualitySeekBar?.progress = it
                 }
