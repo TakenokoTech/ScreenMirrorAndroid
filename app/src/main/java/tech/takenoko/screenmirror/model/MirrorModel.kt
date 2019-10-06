@@ -14,7 +14,7 @@ import java.nio.Buffer
 
 
 class MirrorModel(private val metrics: DisplayMetrics, val callback: MirrorCallback) : ImageReader.OnImageAvailableListener {
-    enum class StatesType { Stop, Waiting, Running }
+    enum class StatesType { Stop, Running }
 
     private var mediaProjection: MediaProjection? = null
     private var virtualDisplay: VirtualDisplay? = null

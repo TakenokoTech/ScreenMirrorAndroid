@@ -2,11 +2,15 @@ package tech.takenoko.screenmirror.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import tech.takenoko.screenmirror.model.MirrorModel
 
 
-class FragmentPage1ViewModel : ViewModel() {
+class MainPageViewModel : ViewModel() {
 
-    var buttonText = MutableLiveData<String>()
+    var visibleUrl = MutableLiveData<Boolean>()
+        private set
+
+    var urlText = MutableLiveData<String>()
         private set
 
     var dateText = MutableLiveData<String>()
