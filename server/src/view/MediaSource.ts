@@ -1,5 +1,3 @@
-// const video = document.getElementById('v');
-// video.src = URL.createObjectURL(mediaSource);
 const mediaSource = new MediaSource();
 
 mediaSource.addEventListener('sourceended', function(e) {

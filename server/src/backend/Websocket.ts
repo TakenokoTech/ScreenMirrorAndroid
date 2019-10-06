@@ -13,29 +13,15 @@ export function startWebsocket() {
         ws.on('message', message => {
             switch (true) {
                 case message == 'polling':
-                    // console.log('Received: polling ', tempMessage.length);
-                    // Log.info('polling', performance.now() - pollingStartTime);
                     pollingStartTime = performance.now();
                     if (tempMessage != '') ws.send(tempMessage);
                     break;
                 default:
-                    // console.log('Received: data    ', tempMessage.length);
                     Log.info('image', performance.now() - imageStartTime);
                     imageStartTime = performance.now();
                     tempMessage = message;
-                    // tempMessage = Array.from(message);
                     break;
             }
         });
     });
 }
-
-/*
-    if (message == 'polling') {
-        // console.log('Received: polling ', tempMessage.length);
-        if (tempMessage != '') ws.send(tempMessage);
-    } else {
-        // console.log('Received: data    ', tempMessage.length);
-        tempMessage = Array.from(message);
-    }
-*/
