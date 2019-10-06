@@ -13,7 +13,7 @@ class WebSocketClient {
         this.socket.addEventListener('open', e => {
             console.log('open');
             this.timer = setInterval(() => this.socket.send('polling'), 30);
-            $('#qrcode').qrcode({ text: `ws://${websocketInput.value}:8080`, width: 200, height: 200, background: '#fff', foreground: '#000' });
+            $('#qrcode').qrcode({ text: `ws://${websocketInput.value}:8080`, width: 200, height: 200, background: '#ffffff', foreground: '#333333' });
         });
         this.socket.addEventListener('message', e => {
             // console.log(e);

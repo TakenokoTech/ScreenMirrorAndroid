@@ -78,3 +78,44 @@ body {
     text-align: center;
     display: none;
 }
+
+/*================================================*/
+/* Dark Mode */
+/*================================================*/
+body.dark {
+    color: #FFF;
+    background-color: #000000
+}
+
+body.dark #form {
+    background-color: #333333;
+    border: 1px solid #808080;
+}
+
+body.dark .form-control {
+    color: #FFF;
+    background-color: #808080;
+    border: 1px solid #333333;
+}
+
+body.dark #form #dorder {
+    background-color: #808080;
+}
+
+body.dark #submit-button.open-button {
+    background-color: #19A3FE;
+}
+
+body.dark #submit-button.close-button {
+    background-color: #FF2222;
+}
+
+body.dark .badge-light {
+    color: #FFF;
+    background-color: #19A3FE;
+    font-weight: 500;
+}
+
+body.dark .qr-group canvas {
+    border: 4px solid #FFF;
+}
