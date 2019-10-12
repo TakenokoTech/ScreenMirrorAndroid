@@ -16,3 +16,7 @@ electron app is [here](https://github.com/TakenokoTech/ScreenMirrorAndroid/tree/
 
 ## ScreenShot
 <img src="./.github/images/android-app.png" width=400>
+
+## Download
+
+[<img src="https://dply.me/xbphpp/button/large" alt="Try it on your device via DeployGate">](https://dply.me/xbphpp#install)
