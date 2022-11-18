@@ -51,7 +51,7 @@
         "express": "^4.17.1",
         "fs": "0.0.1-security",
         "googleapis": "^43.0.0",
-        "html-webpack-plugin": "^3.2.0",
+        "html-webpack-plugin": "^5.5.0",
         "log4js": "^5.1.0",
         "npm": "^6.11.3",
         "postcss-loader": "^3.0.0",
@@ -61,7 +61,7 @@
         "typescript": "^3.6.3",
         "utf-8-validate": "^5.0.2",
         "webpack": "^4.40.2",
-        "webpack-cli": "^3.3.9",
+        "webpack-cli": "^3.3.12",
         "ws": "^7.1.2"
     }
 }
